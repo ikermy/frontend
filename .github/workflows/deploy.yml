@@ -12,8 +12,8 @@ env:
   IMAGE_NAME: ${{ github.repository }}
   # Docker Compose file that is copied to the server
   COMPOSE_FILE: docker-compose.prod.yml
-  # Path where the project lives on the server (container + .env live here)
-  DEPLOY_DIR: barcode/front
+  # Absolute path where the project lives on the server (container + .env live here)
+  DEPLOY_DIR: /barcode/front
 
 jobs:
   build-and-push:
@@ -96,7 +96,7 @@ jobs:
           envs: REGISTRY,IMAGE,SHA,COMPOSE_FILE,DEPLOY_DIR,DOMAIN,NUXT_PUBLIC_API_BASE_URL,NUXT_PUBLIC_API_MODE
           script: |
             set -e
-            cd ~/$DEPLOY_DIR
+            cd $DEPLOY_DIR
 
             # Write the real .env (all runtime variables for the container)
             cat > .env <<EOF
