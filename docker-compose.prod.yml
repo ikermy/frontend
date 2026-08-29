@@ -1,0 +1,14 @@
+services:
+  # Nuxt static frontend served by nginx. Envoy (already running on the VPS)
+  # routes `/` -> `frontend:80` inside the shared barcode_shared network.
+  frontend:
+    image: ${REGISTRY:-ghcr.io}/${IMAGE:-ikermy/frontend}:${TAG:-latest}
+    container_name: frontend
+    restart: unless-stopped
+    networks:
+      - barcode_shared
+
+networks:
+  # Must already exist on the VPS (created by the base barcode system compose)
+  barcode_shared:
+    external: true

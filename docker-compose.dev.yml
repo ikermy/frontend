@@ -1,0 +1,37 @@
+services:
+  nuxt-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: nuxt-dev
+    restart: unless-stopped
+    ports:
+      - "3002:3002"
+    environment:
+      NUXT_HOST: 0.0.0.0
+      NUXT_PORT: 3002
+      NUXT_PUBLIC_API_BASE_URL: ${NUXT_PUBLIC_API_BASE_URL:-http://localhost:3000}
+      NUXT_PUBLIC_API_MODE: ${NUXT_PUBLIC_API_MODE:-mock}
+      NUXT_ALLOWED_HOSTS: ${NUXT_ALLOWED_HOSTS:-}
+    env_file:
+      - path: .env
+        required: false
+    volumes:
+      # Live source code for hot reload
+      - ./app:/app/app
+      - ./i18n:/app/i18n
+      - ./nuxt.config.ts:/app/nuxt.config.ts
+      - ./package.json:/app/package.json
+      # Keep node_modules and .nuxt inside the container (avoid host/container conflicts)
+      - nuxt_node_modules:/app/node_modules
+      - nuxt_build:/app/.nuxt
+    networks:
+      - nuxt-dev-net
+
+volumes:
+  nuxt_node_modules:
+  nuxt_build:
+
+networks:
+  nuxt-dev-net:
+    driver: bridge

@@ -1,0 +1,36 @@
+# Dependencies
+node_modules
+.pnpm-store
+
+# Nuxt / build outputs
+.nuxt
+.output
+.data
+dist
+*.tsbuildinfo
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# Cache
+.cache
+.turbo
+
+# Git
+.git
+.gitignore
+.gitattributes
+
+# Editor / OS
+.idea
+.vscode
+.DS_Store
+
+# Logs
+*.log
+npm-debug.log*
+
+# Misc
+swagger.js

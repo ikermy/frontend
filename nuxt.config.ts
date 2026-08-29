@@ -20,6 +20,7 @@ export default defineNuxtConfig({
     families: [{ name: "Space Grotesk", provider: "google" }],
   },
   i18n: {
+    langDir: "locales",
     defaultLocale: "en",
     locales: [{ code: "en", name: "English", file: "en.json" }],
     strategy: "prefix_except_default",
@@ -46,9 +47,7 @@ export default defineNuxtConfig({
 
     // Public keys (exposed to client-side)
     public: {
-      apiBaseUrl:
-        process.env.NUXT_PUBLIC_API_BASE_URL || "http://localhost:3000",
-      allowedHosts: process.env.NUXT_ALLOWED_HOSTS || "",
+      apiBaseUrl: process.env.NUXT_PUBLIC_API_BASE_URL || "/api/v1",
       apiMode: process.env.NUXT_PUBLIC_API_MODE || "mock",
     },
   },
