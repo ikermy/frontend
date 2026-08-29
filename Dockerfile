@@ -7,7 +7,9 @@ WORKDIR /app
 RUN apk add --no-cache libc6-compat
 
 COPY package.json package-lock.json* ./
-RUN npm ci
+# Use --legacy-peer-deps: the committed lock was generated with this flag
+# (peer dependency conflicts in the Nuxt dependency tree)
+RUN npm install --legacy-peer-deps
 
 COPY . .
 
@@ -19,7 +21,8 @@ ENV NUXT_PUBLIC_API_MODE=$NUXT_PUBLIC_API_MODE
 
 ENV NODE_ENV=production
 
-RUN npm run build   # -> .output/public
+# Generate static SPA output (index.html + assets) for nginx
+RUN npm run generate   # -> .output/public
 
 # ============================================
 # STAGE 2: Serve static files with nginx
