@@ -1,0 +1,420 @@
+{
+  "home": {
+    "home": "Home",
+    "store": "Store",
+    "discussion": "Discussion",
+    "faq": "FAQ",
+    "pdfs": "PDF's",
+    "eecp": "EECP",
+    "title": "Generate Official Documents in Seconds",
+    "desc": "From corporate tax returns to birth, death and diploma certificates, our AI-powered generator delivers print-ready documents in minutes.",
+    "mobile_desc": "Our generator creates perfect PDF417 barcodes that match real driver's licenses. Every detail is encoded correctly to pass any verification system. Works with US, European and international ID formats. Generate single barcodes or bulk batches in seconds.",
+    "second_title": "The leading barcode generator by Russian hackers — now available to everyone",
+    "blocks": {
+      "field_gen": "Automatic Field Generation",
+      "field_gen_desc": "Our tool smartly fills in missing numbers using local and federal guidelines, eliminating manual entry and ensuring seamless barcode creation.",
+      "ai_driven": "AI-Driven Data Processing",
+      "ai_driven_desc": "Leveraging deep learning, our AI analyzes your data to accurately estimate missing parts and generate DMV-level barcodes.",
+      "verif": "Outsmart Verification Systems",
+      "verif_desc": "Our DMV-level barcodes pass top verifiers (BCS, Veriscan, intellicheck, Sumsub) for both online and offline use."
+    },
+    "stats": {
+      "jurisdictions": "Jurisdictions",
+      "barcode_changes": "Barcode Changes",
+      "users": "Users",
+      "generations": "Generations"
+    },
+    "whatsnew": "What's New",
+    "footer": {
+      "main_sections": "Main Sections",
+      "resources": "Resources",
+      "about": "About",
+      "contact": "Contact",
+      "help": "Help",
+      "privacy": "Privacy Policy",
+      "terms": "Terms of use"
+    }
+  },
+  "registration": {
+    "title": "Create your account",
+    "first_desc": "Sign Up Now to Create AI-Powered, 100% Passing DL Barcodes Instantly!",
+    "second_desc": "A single account created on this site will also be valid on the.",
+    "login_tg": "Login with Telegram",
+    "fullname": "Full Name",
+    "email": "Email",
+    "password": "Password",
+    "or_sign_in": "or sign in",
+    "pdf_project": "PDF_PROJECT"
+  },
+  "confirm": {
+    "title": "Check your email",
+    "desc": "Please enter the verification code we sent to your",
+    "code": "Code",
+    "reset_password": "Reset"
+  },
+  "forgot_password": {
+    "title": "Forgot Password",
+    "desc": "Enter your email, and we’ll send a password reset code",
+    "send_code": "Send"
+  },
+  "new_password": {
+    "title": "New password"
+  },
+  "sign_in": {
+    "title": "Sign in",
+    "or_create_account": "or Create an account"
+  },
+  "sidebar": {
+    "to_home": "To Home",
+    "balance": "Balance",
+    "barcodes": "Barcodes",
+    "unlimited": "Unlimited in 140h",
+    "in": "∞ in 148h",
+    "mrz": "MRZ",
+    "other_tools": "Other Tools",
+    "qr_generator": "QR Generator",
+    "field_generator": "Field Generator",
+    "verification_test": "Verification Test",
+    "lookup": "Lookup",
+    "photo_generator": "Photo Generator",
+    "exif_removal": "EXIF Removal",
+    "referral": "Referral program",
+    "help": "Help",
+    "settings": "Settings",
+    "wallet": "Wallet and Subscription",
+    "bulk_generation": "Bulk generation",
+    "store_orders": "Store orders",
+    "notifications": "Notifications",
+    "need_to_generate_barcodes": "Need to generate Barcodes?",
+    "yes_i_do": "Yes, I do"
+  },
+  "settings": {
+    "title": "Settings",
+    "change_password": "Change Password",
+    "change_password_title": "Change Password",
+    "old_password": "Old password",
+    "new_password": "New password",
+    "forgot_password": "Forgot password?",
+    "change": "Change",
+    "upload_account_photo": "Upload account photo",
+    "upload_account_photo_desc": "The recommended image resolution is 1600x1600 pixels.",
+    "send": "Send",
+    "logout": "Log out",
+    "full_name": "Full name",
+    "email": "Email",
+    "password_placeholder": "********",
+    "telegram_link": "Telegram link",
+    "telegram_alt": "Telegram",
+    "uploading": "Uploading",
+    "saving": "Saving...",
+    "save_changes": "Save changes",
+    "update_success": "Settings updated successfully"
+  },
+  "bulk-generation": {
+    "title": "Bulk Generation",
+    "upload_file_here": "Upload file here",
+    "only_xls_files": "Only .XLS files",
+    "history": "History",
+    "no_history": "No history",
+    "generation_error": "Something went wrong during the generation process. Please check your file for errors and revisit the instructions before trying again",
+    "generate": "Generate"
+  },
+  "mrz": {
+    "title": "MRZ",
+    "create_new": "Create new",
+    "sort_by": "Sort by",
+    "re_create": "Re-Create",
+    "free_adjustment": "Free Adjustment",
+    "data_fields": {
+      "generation_date": "Generation Date",
+      "revision_date": "Revision Date",
+      "issuing_country": "Issuing Country",
+      "document_type": "Document Type",
+      "first_name": "First name",
+      "surname": "Surname"
+    },
+    "verification": {
+      "title": "MRZ Verification",
+      "run_validation": "Run Barcode Validation",
+      "package_plan_text": "If you have a package plan, 1 barcode will be deducted",
+      "pay_as_you_go_text": "If you pay as you go, $5 will be debited from your balance"
+    },
+    "details": {
+      "title": "Details of Barcode",
+      "surname": "Surname",
+      "given_names": "Given Name(s)",
+      "date_of_birth": "Date of Birth",
+      "sex": "Sex",
+      "expiration_date": "Expiration Date",
+      "document_number": "Document Number",
+      "personal_number": "Personal Number",
+      "height": "Height"
+    },
+    "delete_modal": {
+      "title": "Are you sure you want to delete this MRZ?",
+      "description": "Deleting this MRZ is permanent and cannot be undone. Please confirm your action.",
+      "delete_button": "Delete",
+      "cancel_button": "Cancel"
+    },
+    "free_adjustment_modal": {
+      "title": "Adjust Your MRZ Details",
+      "description": "It seems like there's an error in the data you provided for MRZ generation. You can adjust one field for free. If more changes are needed, an additional fee will apply",
+      "proceed_button": "Proceed to Adjustment",
+      "cancel_button": "Cancel"
+    }
+  },
+  "photo-generator": {
+    "title": "Photo Generator",
+    "create_new": "Create new",
+    "back": "Back",
+    "sort_by": "Sort by",
+    "total": "Total",
+    "generate_photo": "Generate Photo",
+    "balance_warning": {
+      "title": "Insufficient Balance",
+      "message": "Your wallet has ${available} available. You need ${deficit} more to pay and generate the document."
+    },
+    "top_up": {
+      "title": "Top Up",
+      "current_balance": "Current balance",
+      "confirm_button": "Top Up and Generate",
+      "cancel_button": "Cancel"
+    },
+    "tabs": {
+      "all": "All",
+      "photos": "Photos",
+      "signatures": "Signatures"
+    },
+    "fields": {
+      "height": "Height",
+      "height_placeholder": "Enter height",
+      "eye_color": "Eye Color",
+      "hair_color": "Hair Color",
+      "background": "Background",
+      "select_option": "Select option",
+      "last_name": "Last Name"
+    },
+    "options": {
+      "brown": "Brown",
+      "blue": "Blue",
+      "green": "Green",
+      "hazel": "Hazel",
+      "black": "Black",
+      "blonde": "Blonde",
+      "red": "Red",
+      "white": "White",
+      "gray": "Gray"
+    }
+  },
+  "exif-removal": {
+    "title": "EXIF Removal",
+    "upload_text": "Drag & drop files here or click to upload",
+    "file_type_text": "File type, max 10mb"
+  },
+  "lookup": {
+    "title": "Lookups",
+    "title_full": "BARCODEAI LOOKUP",
+    "create_new": "Create new",
+    "sort_by": "Sort by",
+    "back": "Back",
+    "total": "Total",
+    "pay_and_run": "Pay & Run Lookup",
+    "fields": {
+      "lookup_type": "Lookup Type",
+      "full_name": "Full Name",
+      "address": "Address",
+      "ssn": "SSN"
+    },
+    "types": {
+      "option1": "Option 1",
+      "option2": "Option 2",
+      "option3": "Option 3"
+    },
+    "prices": {
+      "option1": "Price Option 1",
+      "option2": "Price Option 2",
+      "option3": "Price Option 3"
+    }
+  },
+  "verification-test": {
+    "title": "Verification Test",
+    "create_new": "Create new",
+    "sort_by": "Sort by",
+    "back": "Back",
+    "upload_text": "Drag & drop files here or click to",
+    "file_type_text": "Only .XLSX files, max 10mb",
+    "file_name": "File name",
+    "total": "Total",
+    "submit_button": "Submit for Verification",
+    "top_up_and_submit": "Top Up and Submit"
+  },
+  "field-generator": {
+    "title": "Field Generator"
+  },
+  "qr-generator": {
+    "title": "QR Generator"
+  },
+  "wallet": {
+    "title": "Wallet and Subscription",
+    "total_balance": "Total balance",
+    "top_up": "Top up",
+    "subscription": "Subscription",
+    "left_time": "Left: {hours}h",
+    "plan": "Plan",
+    "unlimited_plan": "Unlimited for {hours} hours",
+    "barcodes": "Barcodes",
+    "add": "Add",
+    "available": "Available",
+    "barcodes_available": "{count} Barcodes (unlimited in {hours}h)",
+    "history": {
+      "title": "History",
+      "categories": {
+        "all": "All",
+        "top_ups": "Top-ups",
+        "store": "Store",
+        "purchases": "Purchases"
+      },
+      "sort_by": {
+        "title": "Sort by"
+      }
+    }
+  },
+  "referral": {
+    "title": "Referral program",
+    "totally_earned": "Totally Earned",
+    "unclaimed_balance": "Unclaimed referral balance",
+    "transfer": "Transfer",
+    "totally_invited": "Totally Invited",
+    "level_1_referrals": "Level 1 referrals",
+    "level_2_referrals": "Level 2 referrals",
+    "level_3_referrals": "Level 3 referrals",
+    "program_title": "Earn Up to 30% Commission with BarcodeGPT.ai!",
+    "rule_1": "Earn 20% from all spending by your direct referrals.",
+    "rule_2": "Get 5% from the spending of referrals brought in by your referrals.",
+    "rule_3": "Receive an additional 5% from the spending of the third level of referrals.",
+    "copy": "Copy",
+    "transfer_modal": {
+      "title": "Transfer",
+      "transfer_to": "Transfer to...",
+      "amount_placeholder": "0",
+      "will_be_transferred": "Will be transferred",
+      "transfer_button": "Transfer",
+      "in_store_balance": "In-store Balance (x2!)",
+      "oracle_wallet": "Oracle Wallet (USDT)"
+    }
+  },
+  "store_orders": {
+    "title": "Orders",
+    "order_details": "Order details",
+    "sort_by": "Sort by",
+    "export": "Export",
+    "purchased": "Purchased",
+    "learn_more": "Learn More",
+    "run_barcode_validation": "Run Barcode Validation",
+    "run_data_validation": "Run Data Validation",
+    "details_of_barcode": "Details of Barcode",
+    "generation_date": "Generation date"
+  },
+  "notifications": {
+    "title": "Notifications",
+    "all": "All",
+    "updates": "Updates",
+    "news": "News"
+  },
+  "settingsForm": {
+    "save_changes": "Save changes",
+    "saving": "Saving...",
+    "update_success": "Settings updated successfully"
+  },
+  "topUp": {
+    "title": "Top Up",
+    "currentBalance": "Current Balance",
+    "available": "Available",
+    "unlimitedIn": "unlimited in 140h",
+    "paymentMethods": "Payment Methods",
+    "amount": "Amount",
+    "enterAmount": "Enter amount",
+    "quickAmounts": "Quick Amounts",
+    "topUpButton": "Top Up",
+    "termsAgreement": "By clicking \"Top Up\" you agree to our",
+    "termsOfService": "Terms of Service"
+  },
+  "continue": "Continue",
+  "barcodes": {
+    "title": "Barcodes",
+    "create_new": "Create new",
+    "re_create": "Re-Create",
+    "free_adjustment": "Free Adjustment",
+    "sort_by": "Sort by",
+    "export": "Export",
+    "verif": {
+      "title": "Barcode Bypassing Verification",
+      "btn": "Run Barcode Validation",
+      "desc": "If you have a package plan, 1 barcode will be deductedIf you pay as you go, $5 will be debited from your balance"
+    },
+    "data": {
+      "title": "Data Verification",
+      "btn": "Run Data Validation",
+      "desc": "If you have a package plan, 1 barcode will be deductedIf you pay as you go, $5 will be debited from your balance"
+    },
+    "barcode": {
+      "title": "Details of Barcode",
+      "generation_date": "Generation date",
+      "country": "Country",
+      "state": "State",
+      "revision_date": "Revision date",
+      "surname": "Surname",
+      "first_name": "First name",
+      "birthday": "Birthday",
+      "month_of_expir": "Month of Exparation",
+      "passport_number": "Passport number",
+      "hair_color": "Hair color",
+      "height": "Height",
+      "real_id": "Real ID",
+      "veteran": "Veteran",
+      "donor": "Donor",
+      "di_type": "DI type",
+      "rest": "Rest.",
+      "end": "End.",
+      "issue": "Issue",
+      "exparation": "Exparation",
+      "summary": "Full Details of 128 Code"
+    }
+  },
+  "modals": {
+    "topUp": {
+      "title": "Top up",
+      "currentBalance": "Current balance"
+    },
+    "buyPackages": {
+      "title": "Buy packages",
+      "buy": "Buy"
+    },
+    "pay": {
+      "title": "Pay",
+      "transfer": "Transfer",
+      "btc_address": "BTC address",
+      "topup_with_oracle": "Top up with Oracle",
+      "share_code": "Share code",
+      "share_addy": "Share addy",
+      "cancel": "Cancel"
+    },
+    "subscription": {
+      "title": "Subscription"
+    }
+  },
+  "generating": {
+    "title": "Ai Barcode Generator",
+    "tips": "Tips for This Revision"
+  },
+  "validation": {
+    "full_name_required": "Full name is required",
+    "full_name_min_length": "Full name must be at least 2 characters",
+    "full_name_max_length": "Full name must be no more than 50 characters",
+    "email_required": "Email is required",
+    "email_invalid": "Please enter a valid email address",
+    "password_required": "Password is required",
+    "password_min_length": "Password must be at least 8 characters",
+    "telegram_link_invalid": "Please enter a valid Telegram link"
+  }
+}
