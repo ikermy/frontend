@@ -50,38 +50,47 @@ export class AuthService {
    * HMAC-подпись и возвращает настоящие токены. В mock-режиме возвращает mock-сессию.
    */
   async telegramAuth(payload?: Partial<TelegramAuthData>): Promise<ApiResponse<TelegramAuthResult>> {
-    if (this.client.getMode() === 'mock') {
+    const mode = this.client.getMode();
+    console.log(`[telegramAuth] mode=${mode}, hasPayload=${!!payload}`);
+
+    if (mode === 'mock') {
       const data = await mockTelegramAuth();
       const session = await mockTelegramSession({ ...data, ...payload });
       return { data: session };
     }
 
-    // Генерируем данные как реальный Telegram-виджет (в реальном deploy они придут
-    // GET-параметрами на data-auth-url; сейчас mock имитирует их на клиенте).
-    const data = await mockTelegramAuth();
+    // В real-режиме данные приходят GET-параметрами на data-auth-url от реального
+    // Telegram-виджета (payload). Никакая клиентская криптография здесь не нужна —
+    // hash уже подписан Telegram; BFF → Auth проверит подпись.
+    const data = payload ?? await mockTelegramAuth();
 
     // BFF → Auth.telegramAuth возвращает { access_token, refresh_token }.
-    const { data: tokens } = await this.client.post<AuthTokens>(
-      apiConfig.endpoints.auth.telegramAuth,
-      {
-        id: data.id,
-        first_name: data.first_name,
-        last_name: data.last_name || "",
-        username: data.username || "",
-        photo_url: data.photo_url || "",
-        auth_date: data.auth_date,
-        hash: data.hash,
-        ...(payload || {}),
-      },
-    );
-
-    return {
-      data: {
-        accessToken: tokens.access_token,
-        refreshToken: tokens.refresh_token,
-        isNewUser: false,
-      },
-    };
+    console.log(`[telegramAuth] POST ${apiConfig.endpoints.auth.telegramAuth} id=${data.id} auth_date=${data.auth_date} hash=${data.hash?.slice(0, 8)}…`);
+    try {
+      const { data: tokens } = await this.client.post<AuthTokens>(
+        apiConfig.endpoints.auth.telegramAuth,
+        {
+          id: data.id,
+          first_name: data.first_name,
+          last_name: data.last_name || "",
+          username: data.username || "",
+          photo_url: data.photo_url || "",
+          auth_date: data.auth_date,
+          hash: data.hash,
+        },
+      );
+      console.log(`[telegramAuth] OK accessToken len=${tokens.access_token?.length}`);
+      return {
+        data: {
+          accessToken: tokens.access_token,
+          refreshToken: tokens.refresh_token,
+          isNewUser: false,
+        },
+      };
+    } catch (e: any) {
+      console.error(`[telegramAuth] FAILED:`, e?.message, e?.code, e?.details ?? e);
+      throw e;
+    }
   }
 
   /**
