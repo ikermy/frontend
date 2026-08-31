@@ -43,7 +43,7 @@ export class PhotoGeneratorService {
           ? `${apiConfig.endpoints.photoGenerator.list}?${params.toString()}`
           : apiConfig.endpoints.photoGenerator.list;
         
-        response = await this.client.get<PhotoGeneratorItem[]>(endpoint);
+        response = await this.client.get<PhotoGeneratorItem[]>(endpoint, "barcodegen");
       }
 
       this.store.setItems(response.data);
@@ -72,7 +72,7 @@ export class PhotoGeneratorService {
       };
     }
 
-    return this.client.get<PhotoGeneratorItem>(apiConfig.endpoints.photoGenerator.get(id));
+    return this.client.get<PhotoGeneratorItem>(apiConfig.endpoints.photoGenerator.get(id), "barcodegen");
   }
 
   /**
@@ -99,7 +99,7 @@ export class PhotoGeneratorService {
           data: newItem,
         };
       } else {
-        response = await this.client.post<PhotoGeneratorItem>(apiConfig.endpoints.photoGenerator.create, data);
+        response = await this.client.post<PhotoGeneratorItem>(apiConfig.endpoints.photoGenerator.create, data, "barcodegen");
       }
 
       this.store.addItem(response.data);

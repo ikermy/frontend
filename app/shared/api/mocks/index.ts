@@ -11,4 +11,5 @@ export * from './lookup.mocks';
 export * from './verificationTest.mocks';
 export * from './referral.mocks';
 export * from './bulkGeneration.mocks';
+export * from './auth.mocks';
 

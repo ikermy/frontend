@@ -23,6 +23,8 @@
 </template>
 
 <script setup lang="ts">
+
+definePageMeta({ middleware: "auth" });
 import Select from "~/shared/ui/Select.vue";
 import Button from "~/shared/ui/Button.vue";
 import PhotoGeneratorDateGroup from "~/features/photo-generator/PhotoGeneratorDateGroup.vue";

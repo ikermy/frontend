@@ -31,7 +31,8 @@ export class BulkGenerationService {
         };
       } else {
         response = await this.client.get<BulkGenerationHistoryItem[]>(
-          apiConfig.endpoints.bulk.history
+          apiConfig.endpoints.bulk.history,
+          "barcodegen"
         );
       }
 
@@ -69,7 +70,7 @@ export class BulkGenerationService {
           data: { success: true, fileId: Date.now().toString() },
         };
       } else {
-        response = await this.client.post(apiConfig.endpoints.bulk.upload, formData);
+        response = await this.client.post(apiConfig.endpoints.bulk.upload, formData, "barcodegen");
       }
 
       return response;
@@ -114,7 +115,8 @@ export class BulkGenerationService {
       } else {
         response = await this.client.post<BulkGenerationHistoryItem>(
           apiConfig.endpoints.bulk.generate,
-          data
+          data,
+          "barcodegen"
         );
       }
 
@@ -150,7 +152,7 @@ export class BulkGenerationService {
         const endpoint = type
           ? `${apiConfig.endpoints.bulk.download(id)}?type=${type}`
           : apiConfig.endpoints.bulk.download(id);
-        response = await this.client.get<Blob>(endpoint);
+        response = await this.client.get<Blob>(endpoint, "barcodegen");
       }
 
       return response;

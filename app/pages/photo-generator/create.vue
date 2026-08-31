@@ -212,6 +212,8 @@
 </template>
 
 <script setup lang="ts">
+
+definePageMeta({ middleware: "auth" });
 import Button from "~/shared/ui/Button.vue";
 import Input from "~/shared/ui/Input.vue";
 import Select from "~/shared/ui/Select.vue";

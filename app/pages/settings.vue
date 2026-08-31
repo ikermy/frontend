@@ -12,5 +12,7 @@
 </template>
 
 <script setup lang="ts">
+
+definePageMeta({ middleware: "auth" });
 import SettingsForm from "~/features/settings/SettingsForm.vue";
 </script>

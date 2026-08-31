@@ -27,7 +27,7 @@
         :placeholder="$t('generating.select_generation_mode')"
       />
     </div>
-    <Button class="mt-10 w-full" color="white" text-color="dark">
+    <Button class="mt-10 w-full" color="white" text-color="dark" :on-click="() => router.push('/barcodes')">
       {{ $t("continue") }}
     </Button>
     <NuxtLink :to="localePath('/tips')">
@@ -39,7 +39,10 @@
 </template>
 
 <script setup lang="ts">
+
+definePageMeta({ middleware: "auth" });
 import Select from "~/shared/ui/Select.vue";
 import Button from "~/shared/ui/Button.vue";
 const localePath = useLocalePath();
+const router = useRouter();
 </script>

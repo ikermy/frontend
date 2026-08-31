@@ -51,6 +51,8 @@
 </template>
 
 <script setup lang="ts">
+
+definePageMeta({ middleware: "auth" });
 import Button from '~/shared/ui/Button.vue';
 import MinusIcon from '~/components/icons/MinusIcon.vue';
 import PlusIcon from '~/components/icons/PlusIcon.vue';

@@ -17,8 +17,12 @@
           }}</span>
           <div class="flex gap-4">
             <div class="flex desktop:hidden gap-3">
-              <img :src="icons.help" alt="Help" class="w-5 h-5 brightness-150" />
-              <img :src="icons.settings" alt="Help" class="w-5 h-5 brightness-150" />
+              <NuxtLink :to="getLocalizedItemPath('/faqs')">
+                <img :src="icons.help" alt="Help" class="w-5 h-5 brightness-150" />
+              </NuxtLink>
+              <NuxtLink :to="getLocalizedItemPath('/settings')">
+                <img :src="icons.settings" alt="Settings" class="w-5 h-5 brightness-150" />
+              </NuxtLink>
             </div>
             <div class="flex items-center gap-1">
               <span class="text-sm">EN</span>
@@ -37,7 +41,9 @@
             </h3>
             <p class="text-2xl font-bold font-space-grotesk">$10,100</p>
           </div>
-          <img :src="icons.plus" alt="Add Balance" class="w-6 h-6 mb-4" />
+          <NuxtLink :to="getLocalizedItemPath('/wallet/top-up')">
+            <img :src="icons.plus" alt="Add Balance" class="w-6 h-6 mb-4 cursor-pointer" />
+          </NuxtLink>
         </div>
         <div class="flex w-full bg-bg-tertiary h-[1px]" />
         <div class="px-4 py-3">
@@ -113,9 +119,11 @@
           <p class="text-mb-3 font-hector text-black max-w-[150px]">
             {{ t("sidebar.need_to_generate_barcodes") }}
           </p>
-          <Button color="white" size="sm" class="text-xs max-w-[87px] h-[32px]" text-color="dark">
-            {{ t("sidebar.yes_i_do") }}
-          </Button>
+          <NuxtLink :to="getLocalizedItemPath('/generating')">
+            <Button color="white" size="sm" class="text-xs max-w-[87px] h-[32px]" text-color="dark">
+              {{ t("sidebar.yes_i_do") }}
+            </Button>
+          </NuxtLink>
           <img src="assets/svg/dark/man.svg" alt="Man" class="absolute top-2 right-[-45px] h-[126px]" />
         </div>
       </div>

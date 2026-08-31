@@ -45,7 +45,7 @@ export class NotificationsService {
         if (filters?.type) params.append('type', filters.type);
         
         const endpoint = `${apiConfig.endpoints.notifications.list}?${params.toString()}`;
-        response = await this.client.get<Notification[]>(endpoint);
+        response = await this.client.get<Notification[]>(endpoint, "history");
       }
 
       this.store.setNotifications(response.data);
@@ -72,7 +72,7 @@ export class NotificationsService {
           data: undefined,
         };
       } else {
-        response = await this.client.post<void>(apiConfig.endpoints.notifications.markRead(id));
+        response = await this.client.post<void>(apiConfig.endpoints.notifications.markRead(id), "history");
       }
 
       this.store.markAsRead(id);
@@ -97,7 +97,7 @@ export class NotificationsService {
           data: undefined,
         };
       } else {
-        response = await this.client.post<void>(apiConfig.endpoints.notifications.markAllRead);
+        response = await this.client.post<void>(apiConfig.endpoints.notifications.markAllRead, "history");
       }
 
       this.store.markAllAsRead();

@@ -5,13 +5,15 @@
         <h1 class="font-hector text-3xl font-semibold">
           {{ $t("barcodes.title") }}
         </h1>
-        <Button
-          color="white"
-          text-color="dark"
-          class="max-w-[131px] w-full font-semibold text-lg"
-        >
-          {{ $t("barcodes.create_new") }}
-        </Button>
+        <NuxtLink :to="localePath('/generating')">
+          <Button
+            color="white"
+            text-color="dark"
+            class="max-w-[131px] w-full font-semibold text-lg"
+          >
+            {{ $t("barcodes.create_new") }}
+          </Button>
+        </NuxtLink>
       </div>
       <Select
         :options="[t('barcodes.sort_by')]"
@@ -41,6 +43,8 @@
 </template>
 
 <script setup lang="ts">
+
+definePageMeta({ middleware: "auth" });
 import Button from "~/shared/ui/Button.vue";
 import Select from "~/shared/ui/Select.vue";
 import HistoryCard from "~/features/barcodes/HistoryCard.vue";

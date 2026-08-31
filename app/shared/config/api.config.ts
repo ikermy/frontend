@@ -1,108 +1,124 @@
 /**
  * API Configuration
- * Centralized configuration for all API endpoints
+ * Centralized configuration for all API endpoints and service targets.
+ *
+ * Маршрутизация:
+ *   - auth → BFF (через /api/v1, проксирует в Auth Service)
+ *   - barcodegen, billing, ai, history → напрямую в соответствующие сервисы
  */
 
+// Префиксы vite-proxy в dev (см. nuxt.config.ts vite.server.proxy).
+// В проде фронт ходит к сервисам через Envoy или прямые docker-имена.
+export const serviceURLs = {
+  barcodegen: process.env.NUXT_PUBLIC_BARCODEGEN_URL || "/barcodegen",
+  billing: process.env.NUXT_PUBLIC_BILLING_URL || "/billing",
+  ai: process.env.NUXT_PUBLIC_AI_URL || "/ai",
+  history: process.env.NUXT_PUBLIC_HISTORY_URL || "/history",
+};
+
 export const apiConfig = {
-  // Base API URL - should be set via environment variables
-  baseURL: process.env.NUXT_PUBLIC_API_BASE_URL || "http://localhost:3000",
+  // Base API URL (BFF) — /api/v1
+  baseURL: process.env.NUXT_PUBLIC_API_BASE_URL || "/api/v1",
 
   // API endpoints
   endpoints: {
-    // Auth
+    // Auth (через BFF, baseURL = /api/v1)
     auth: {
-      signIn: "/api/auth/signin",
-      signUp: "/api/auth/signup",
-      signOut: "/api/auth/signout",
-      refresh: "/api/auth/refresh",
-      forgotPassword: "/api/auth/forgot-password",
-      resetPassword: "/api/auth/reset-password",
-      confirm: "/api/auth/confirm",
+      signIn: "/auth/login",
+      signUp: "/auth/register",
+      signOut: "/auth/logout",
+      refresh: "/auth/refresh",
+      forgotPassword: "/auth/forgot-password",
+      resetPassword: "/auth/reset-password",
+      confirm: "/auth/confirm",
+      telegramAuth: "/auth/telegram",
     },
 
-    // Barcodes
+    // Barcodes (→ barcodegen)
     barcodes: {
-      list: "/api/barcodes",
-      get: (id: string) => `/api/barcodes/${id}`,
-      create: "/api/barcodes",
-      update: (id: string) => `/api/barcodes/${id}`,
-      delete: (id: string) => `/api/barcodes/${id}`,
-      history: "/api/barcodes/history",
+      list: "/barcodes",
+      get: (id: string) => `/barcodes/${id}`,
+      create: "/barcodes",
+      update: (id: string) => `/barcodes/${id}`,
+      delete: (id: string) => `/barcodes/${id}`,
+      history: "/barcodes/history",
     },
 
-    // MRZ
+    // MRZ (→ barcodegen)
     mrz: {
-      list: "/api/mrz",
-      get: (id: string) => `/api/mrz/${id}`,
-      create: "/api/mrz",
-      verify: (id: string) => `/api/mrz/${id}/verify`,
+      list: "/mrz",
+      get: (id: string) => `/mrz/${id}`,
+      create: "/mrz",
+      verify: (id: string) => `/mrz/${id}/verify`,
     },
 
-    // Bulk Generation
+    // Bulk Generation (→ barcodegen)
     bulk: {
-      upload: "/api/bulk/upload",
-      generate: "/api/bulk/generate",
-      history: "/api/bulk/history",
-      download: (id: string) => `/api/bulk/${id}/download`,
+      upload: "/bulk/upload",
+      generate: "/bulk/generate",
+      history: "/bulk/history",
+      download: (id: string) => `/bulk/${id}/download`,
     },
 
-    // Photo Generator
+    // Photo Generator (→ barcodegen/ai)
     photoGenerator: {
-      create: "/api/photo-generator",
-      list: "/api/photo-generator",
-      get: (id: string) => `/api/photo-generator/${id}`,
+      create: "/photo-generator",
+      list: "/photo-generator",
+      get: (id: string) => `/photo-generator/${id}`,
     },
 
-    // Lookup
+    // Lookup (→ barcodegen)
     lookup: {
-      create: "/api/lookup",
-      list: "/api/lookup",
-      get: (id: string) => `/api/lookup/${id}`,
+      create: "/lookup",
+      list: "/lookup",
+      get: (id: string) => `/lookup/${id}`,
     },
 
-    // Wallet
+    // Wallet (→ billing)
     wallet: {
-      balance: "/api/wallet/balance",
-      transactions: "/api/wallet/transactions",
-      topUp: "/api/wallet/top-up",
-      packages: "/api/wallet/packages",
-      subscription: "/api/wallet/subscription",
+      balance: "/wallet/balance",
+      transactions: "/wallet/transactions",
+      topUp: "/wallet/top-up",
+      packages: "/wallet/packages",
+      subscription: "/wallet/subscription",
     },
 
-    // Referral
+    // Referral (→ billing)
     referral: {
-      stats: "/api/referral/stats",
-      balance: "/api/referral/balance",
-      transfer: "/api/referral/transfer",
+      stats: "/referral/stats",
+      balance: "/referral/balance",
+      transfer: "/referral/transfer",
     },
 
-    // Notifications
+    // Notifications (→ history)
     notifications: {
-      list: "/api/notifications",
-      markRead: (id: string) => `/api/notifications/${id}/read`,
-      markAllRead: "/api/notifications/read-all",
+      list: "/notifications",
+      markRead: (id: string) => `/notifications/${id}/read`,
+      markAllRead: "/notifications/read-all",
     },
 
     // Settings
     settings: {
-      get: "/api/settings",
-      update: "/api/settings",
-      changePassword: "/api/settings/password",
-      uploadAvatar: "/api/settings/avatar",
+      get: "/settings/profile",
+      update: "/settings",
+      changePassword: "/settings/password",
+      uploadAvatar: "/settings/avatar",
+      updateTelegram: "/settings/telegram",
+      updateNickname: "/settings/nickname",
     },
 
-    // Store Orders
+    // Store Orders (→ history)
     storeOrders: {
-      list: "/api/store-orders",
-      get: (id: string) => `/api/store-orders/${id}`,
+      list: "/store-orders",
+      get: (id: string) => `/store-orders/${id}`,
     },
 
-    // Verification Test
+    // Verification Test (→ barcodegen)
     verificationTest: {
-      create: "/api/verification-test",
-      list: "/api/verification-test",
-      get: (id: string) => `/api/verification-test/${id}`,
-      download: (id: string) => `/api/verification-test/${id}/download`,
+      create: "/verification-test",
+      list: "/verification-test",
+      get: (id: string) => `/verification-test/${id}`,
+      download: (id: string) => `/verification-test/${id}/download`,
     },
   },
 };

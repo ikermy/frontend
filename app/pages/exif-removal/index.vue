@@ -98,6 +98,8 @@
 </template>
 
 <script setup lang="ts">
+
+definePageMeta({ middleware: "auth" });
 import Button from "~/shared/ui/Button.vue";
 
 const { t } = useI18n();

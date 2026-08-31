@@ -29,7 +29,7 @@ export class MRZService {
           data: mockMRZItems,
         };
       } else {
-        response = await this.client.get<MRZItem[]>(apiConfig.endpoints.mrz.list);
+        response = await this.client.get<MRZItem[]>(apiConfig.endpoints.mrz.list, "barcodegen");
       }
 
       this.store.setItems(response.data);
@@ -58,7 +58,7 @@ export class MRZService {
       };
     }
 
-    return this.client.get<MRZItem>(apiConfig.endpoints.mrz.get(id));
+    return this.client.get<MRZItem>(apiConfig.endpoints.mrz.get(id), "barcodegen");
   }
 
   /**
@@ -83,7 +83,7 @@ export class MRZService {
           data: newItem,
         };
       } else {
-        response = await this.client.post<MRZItem>(apiConfig.endpoints.mrz.create, data);
+        response = await this.client.post<MRZItem>(apiConfig.endpoints.mrz.create, data, "barcodegen");
       }
 
       this.store.addItem(response.data);
@@ -108,7 +108,7 @@ export class MRZService {
       };
     }
 
-    return this.client.post(apiConfig.endpoints.mrz.verify(id));
+    return this.client.post(apiConfig.endpoints.mrz.verify(id), "barcodegen");
   }
 }
 

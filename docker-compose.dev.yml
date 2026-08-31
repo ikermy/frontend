@@ -5,11 +5,13 @@ services:
       dockerfile: Dockerfile.dev
     container_name: nuxt-dev
     restart: unless-stopped
+    # Nuxt слушает :80 в контейнере (чтобы Envoy/кластер frontend_http попадал на frontend:80),
+    # наружу проброшен на хост-порт 3002.
     ports:
-      - "3002:3002"
+      - "3002:80"
     environment:
       NUXT_HOST: 0.0.0.0
-      NUXT_PORT: 3002
+      NUXT_PORT: 80
       NUXT_PUBLIC_API_BASE_URL: ${NUXT_PUBLIC_API_BASE_URL:-http://localhost:3000}
       NUXT_PUBLIC_API_MODE: ${NUXT_PUBLIC_API_MODE:-mock}
       NUXT_ALLOWED_HOSTS: ${NUXT_ALLOWED_HOSTS:-}
@@ -26,7 +28,12 @@ services:
       - nuxt_node_modules:/app/node_modules
       - nuxt_build:/app/.nuxt
     networks:
-      - nuxt-dev-net
+      nuxt-dev-net:
+      # Общая сеть платформы: алиас frontend нужен, чтобы Envoy (кластер frontend_http)
+      # маршрутизировал дефолт /* → nuxt-dev:80, как ожидает envoy.dev.yaml.
+      barcode-shared:
+        aliases:
+          - frontend
 
 volumes:
   nuxt_node_modules:
@@ -35,3 +42,8 @@ volumes:
 networks:
   nuxt-dev-net:
     driver: bridge
+  # Общая сеть платформы (docker network create barcode_shared) —
+  # фронт в dev ходит в BFF (bff) и Auth напрямую, минуя Envoy.
+  barcode-shared:
+    external: true
+    name: barcode_shared

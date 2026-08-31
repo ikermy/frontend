@@ -18,23 +18,19 @@
         </p>
       </div>
     </div>
-    <Button
-      leading-icon="mingcute:telegram-fill"
-      class="mt-4"
-      color="tertiary"
-      size="md"
-      text-color="primary"
-    >
-      {{ $t("registration.login_tg") }}
-    </Button>
+    <TelegramAuthButton class="mt-4" @success="onTelegramSuccess" />
 
     <RegistrationForm class="mt-10" />
   </div>
 </template>
 
 <script setup lang="ts">
-import Button from "~/shared/ui/Button.vue";
+import TelegramAuthButton from "~/features/auth/TelegramAuthButton.vue";
 import RegistrationForm from "~/features/auth/registration/RegistrationForm.vue";
+
+const onTelegramSuccess = () => {
+  // После входа через Telegram компонент уже перенаправил на главную.
+};
 
 // Устанавливаем мета-теги для страницы
 useHead({

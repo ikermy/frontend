@@ -24,6 +24,14 @@
         <p class="text-xs font-inter font-medium text-text-secondary">
           {{ $t("settings.upload_account_photo_desc") }}
         </p>
+        <!-- Превью загруженного/существующего фото -->
+        <div v-if="avatarPreview" class="mt-2 flex justify-center">
+          <img
+            :src="avatarPreview"
+            class="w-20 h-20 rounded-full object-cover"
+            alt="Avatar"
+          />
+        </div>
         <!-- File upload status -->
         <div
           v-if="hasFiles"
@@ -55,7 +63,8 @@
           :value="getFieldValue('fullName')"
           :placeholder="$t('settings.full_name')"
           :error="getFieldError('fullName')"
-          @input="(value: string) => handleFieldChange('fullName', value)"
+          :disabled="isTelegramAccount"
+          @input="(e: any) => handleFieldChange('fullName', e.target.value)"
           @blur="handleFieldBlur('fullName')"
         />
         <span v-if="getFieldError('fullName')" class="text-red-500 text-xs">
@@ -70,7 +79,8 @@
           :placeholder="$t('settings.email')"
           type="email"
           :error="getFieldError('email')"
-          @input="(value: string) => handleFieldChange('email', value)"
+          :disabled="isTelegramAccount"
+          @input="(e: any) => handleFieldChange('email', e.target.value)"
           @blur="handleFieldBlur('email')"
         />
         <span v-if="getFieldError('email')" class="text-red-500 text-xs">
@@ -88,6 +98,7 @@
           :value="getFieldValue('password')"
           :placeholder="$t('settings.password_placeholder')"
           class="flex-1 bg-transparent text-text-tertiary outline-none p-3"
+          :disabled="isTelegramAccount"
           @input="
             (e: Event) =>
               handleFieldChange(
@@ -101,6 +112,7 @@
           color="secondary"
           text-color="white"
           class="h-9 my-1 mr-1"
+          :disabled="isTelegramAccount"
           @click="isChangePasswordModalOpen = true"
         >
           {{ $t("settings.change") }}
@@ -151,7 +163,8 @@
           type="text"
           class="bg-transparent text-text-tertiary outline-none"
           :placeholder="$t('settings.telegram_link')"
-          @input="(value: string) => handleFieldChange('telegramLink', value)"
+          :disabled="isTelegramAccount"
+          @input="(e: any) => handleFieldChange('telegramLink', e.target.value)"
           @blur="handleFieldBlur('telegramLink')"
         />
       </div>
@@ -183,10 +196,19 @@
     <!-- Action Buttons -->
     <div class="flex flex-col gap-3 mt-6">
       <Button
+        color="white"
+        text-color="dark"
+        class="h-11"
+        :loading="isSubmitting"
+        :on-click="handleSubmit"
+      >
+        {{ $t("settings.save_changes") }}
+      </Button>
+      <Button
         color="secondary"
         text-color="negative"
-        class="h-11 bg-[#2B2B2B] rounded-[12px]"
-        @click="handleLogout"
+        class="h-11 bg-bg-tertiary rounded-[12px]"
+        :on-click="handleLogout"
       >
         {{ $t("settings.logout") }}
       </Button>
@@ -205,9 +227,47 @@ import { useFormValidation } from "~/shared/composables/useFormValidation";
 import { useFormSubmit } from "~/shared/composables/useFormSubmit";
 import { useFileUpload } from "~/shared/composables/useFileUpload";
 import { useAssets } from "~/shared/composables/useAssets";
+import { getApiClient } from "~/shared/api/client";
+import { apiConfig } from "~/shared/config/api.config";
+import { getAuthService } from "~/shared/api/services";
+import { useAuthStore } from "~/shared/store/useAuth";
+import { onMounted } from "vue";
+
+// Сжатие изображения в base64 data URL (чтобы не раздувать БД).
+function resizeImageToDataUrl(
+  file: File,
+  maxSize = 300,
+  quality = 0.8
+): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement("canvas");
+        const scale = Math.min(1, maxSize / Math.max(img.width, img.height));
+        canvas.width = Math.round(img.width * scale);
+        canvas.height = Math.round(img.height * scale);
+        const ctx = canvas.getContext("2d");
+        if (!ctx) {
+          reject(new Error("Canvas not supported"));
+          return;
+        }
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        resolve(canvas.toDataURL("image/jpeg", quality));
+      };
+      img.onerror = () => reject(new Error("Failed to load image"));
+      img.src = e.target?.result as string;
+    };
+    reader.onerror = () => reject(new Error("Failed to read file"));
+    reader.readAsDataURL(file);
+  });
+}
 
 const { t } = useI18n();
 const { icons } = useAssets();
+const localePath = useLocalePath();
+const authStore = useAuthStore();
 
 // Form state management
 interface SettingsFormData {
@@ -255,11 +315,13 @@ const validationRules = {
     { required: true, message: t("validation.email_required") },
     { email: true, message: t("validation.email_invalid") },
   ],
-  password: [
-    { required: true, message: t("validation.password_required") },
-    { minLength: 8, message: t("validation.password_min_length") },
+  password: [],
+  telegramLink: [
+    {
+      pattern: /^(?:@[a-zA-Z0-9_]{3,32}|https?:\/\/(?:t\.me|telegram\.me)\/[a-zA-Z0-9_]{3,32})$/,
+      message: t("validation.telegram_link_invalid"),
+    },
   ],
-  telegramLink: [{ url: true, message: t("validation.telegram_link_invalid") }],
 };
 
 const { validationErrors, isFormValid, hasErrors, validateField, validateAll } =
@@ -289,17 +351,36 @@ const {
 
 // Form submission
 const submitSettings = async (formData: SettingsFormData) => {
-  // Mock API call - replace with actual API
-  return new Promise((resolve, reject) => {
-    setTimeout(() => {
-      if (Math.random() > 0.1) {
-        // 90% success rate for demo
-        resolve({ success: true, data: formData });
-      } else {
-        reject(new Error("Failed to update settings"));
-      }
-    }, 1000);
-  });
+  const client = getApiClient();
+  const authService = getAuthService();
+
+  // Для аккаунта, созданного через Telegram, смена full name/пароля/telegram недоступна.
+  const telegramAccount = authStore.isTelegramAccount;
+
+  // Если выбран новый файл — отправляем его (base64 data URL) в BFF → Auth.
+  // Существующее фото приходит как base64-строка и повторно не загружается.
+  if (formData.profilePhoto instanceof File) {
+    const photoBase64 = await resizeImageToDataUrl(formData.profilePhoto, 300, 0.8);
+    await client.post(apiConfig.endpoints.settings.uploadAvatar, {
+      photo: photoBase64,
+    });
+  }
+
+  if (!telegramAccount) {
+    // Сохраняем Telegram username (без @) в BFF → Auth.
+    const tg = (formData.telegramLink || "").trim().replace(/^@/, "").replace(/^https?:\/\/(t\.me|telegram\.me)\//, "");
+    if (tg) {
+      await authService.updateTelegramUsername(tg);
+    }
+
+    // Сохраняем отображаемое имя (nickname) в BFF → Auth.
+    const fullName = (formData.fullName || "").trim();
+    if (fullName) {
+      await authService.updateNickname(fullName);
+    }
+  }
+
+  return { success: true, data: formData };
 };
 
 const {
@@ -318,12 +399,54 @@ const {
   resetAfterSubmit: false,
   showSuccessMessage: true,
   successMessage: t("settingsForm.update_success"),
-  onSuccess: data => {
+  onSuccess: async data => {
     console.log("Settings updated successfully:", data);
+    // Обновляем профиль в store, чтобы аватар/telegram сразу отобразились в шапке.
+    await authStore.loadProfile();
+    // Перезагружаем локальную форму (актуальное фото/telegram после сохранения).
+    await loadProfile();
   },
   onError: error => {
     console.error("Settings update failed:", error);
   },
+});
+
+// Загрузка профиля пользователя при открытии настроек (email, имя, telegram, фото)
+const loadProfile = async () => {
+  try {
+    const { data } = await getAuthService().getProfile();
+    // Для аккаунта, созданного через Telegram, full name и telegram берутся из Telegram-данных.
+    setFieldValue("fullName", data.nickname || data.username || "");
+    setFieldValue("email", data.email || "");
+    setFieldValue("telegramLink", data.telegramUsername ? `@${data.telegramUsername}` : "");
+    if (data.photoBase64) {
+      // Существующее фото — это base64-строка для отображения (не File).
+      // Не кладём её в profilePhoto, чтобы не загружать повторно при сохранении.
+      uploadedPhotoBase64.value = data.photoBase64;
+    } else if (data.origin === "telegram" && data.telegramPhotoUrl) {
+      // Аватар из Telegram подгружается автоматически (URL из TG).
+      uploadedPhotoBase64.value = data.telegramPhotoUrl;
+    }
+  } catch (error) {
+    console.error("Failed to load profile:", error);
+  }
+};
+
+// Хранит base64 загруженной/существующей фотографии для отображения
+const uploadedPhotoBase64 = ref("");
+
+// Аккаунт, созданный через Telegram — смена full name/пароля/telegram недоступна.
+const isTelegramAccount = computed(() => authStore.isTelegramAccount);
+
+// Превью аватара: свежезагруженный файл > существующее фото (base64) > фото из Telegram
+const avatarPreview = computed(() => {
+  if (files.value[0]?.preview) return files.value[0].preview;
+  if (uploadedPhotoBase64.value) return uploadedPhotoBase64.value;
+  return authStore.profile.telegramPhotoUrl || "";
+});
+
+onMounted(() => {
+  loadProfile();
 });
 
 // Modal state management
@@ -384,9 +507,9 @@ const handleFieldChange = (
 };
 
 // Handle logout
-const handleLogout = () => {
-  // Implement logout logic
-  console.log("Logout clicked");
+const handleLogout = async () => {
+  authStore.logout();
+  await navigateTo(localePath("/"));
 };
 
 // Watch for validation errors and update form errors

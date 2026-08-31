@@ -27,6 +27,8 @@
 </template>
 
 <script setup lang="ts">
+
+definePageMeta({ middleware: "auth" });
 import Select from "~/shared/ui/Select.vue";
 import Button from "~/shared/ui/Button.vue";
 import PhotoGeneratorTabs from "~/features/photo-generator/PhotoGeneratorTabs.vue";

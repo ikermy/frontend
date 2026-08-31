@@ -23,6 +23,8 @@
 </template>
 
 <script setup lang="ts">
+
+definePageMeta({ middleware: "auth" });
 import DiscountIcon from '~/components/icons/DiscountIcon.vue';
 import BackIcon from '~/components/icons/BackIcon.vue';
 

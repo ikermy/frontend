@@ -30,7 +30,7 @@ export class WalletService {
           data: mockWalletBalances,
         };
       } else {
-        response = await this.client.get<WalletBalance[]>(apiConfig.endpoints.wallet.balance);
+        response = await this.client.get<WalletBalance[]>(apiConfig.endpoints.wallet.balance, "billing");
       }
 
       this.store.setBalances(response.data);
@@ -61,7 +61,7 @@ export class WalletService {
           data: mockTransactions,
         };
       } else {
-        response = await this.client.get<Transaction[]>(apiConfig.endpoints.wallet.transactions);
+        response = await this.client.get<Transaction[]>(apiConfig.endpoints.wallet.transactions, "billing");
       }
 
       this.store.setTransactions(response.data);
@@ -86,7 +86,7 @@ export class WalletService {
       };
     }
 
-    return this.client.post(apiConfig.endpoints.wallet.topUp, data);
+    return this.client.post(apiConfig.endpoints.wallet.topUp, data, "billing");
   }
 
   /**
@@ -100,7 +100,7 @@ export class WalletService {
       };
     }
 
-    return this.client.get(apiConfig.endpoints.wallet.packages);
+    return this.client.get(apiConfig.endpoints.wallet.packages, "billing");
   }
 
   /**
@@ -114,7 +114,7 @@ export class WalletService {
       };
     }
 
-    return this.client.get(apiConfig.endpoints.wallet.subscription);
+    return this.client.get(apiConfig.endpoints.wallet.subscription, "billing");
   }
 }
 

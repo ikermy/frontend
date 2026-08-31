@@ -1,4 +1,7 @@
 {
+  "header": {
+    "logout": "Log out"
+  },
   "home": {
     "home": "Home",
     "store": "Store",
@@ -45,6 +48,9 @@
     "password": "Password",
     "or_sign_in": "or sign in",
     "pdf_project": "PDF_PROJECT"
+  },
+  "telegramAuth": {
+    "redirecting": "Signing in with Telegram..."
   },
   "confirm": {
     "title": "Check your email",

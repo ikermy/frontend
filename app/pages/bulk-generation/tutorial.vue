@@ -114,6 +114,8 @@
 </template>
 
 <script setup lang="ts">
+
+definePageMeta({ middleware: "auth" });
 const router = useRouter();
 const isMobile = ref(false);
 

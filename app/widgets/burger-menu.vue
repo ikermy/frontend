@@ -4,18 +4,26 @@
     class="bg-bg-white absolute z-40 size-full top-0 px-4 mt-[48px]"
   >
     <div class="flex flex-col gap-3 my-[48px]">
-      <p v-for="value in items" :key="value.label" class="text-[28px]">
+      <NuxtLink
+        v-for="value in items"
+        :key="value.label"
+        :to="localePath(value.path)"
+        class="text-[28px] cursor-pointer"
+        @click="burgerMenuStore.close()"
+      >
         {{ value.label }}
-      </p>
+      </NuxtLink>
     </div>
     <div class="flex mt-[48px] gap-[15px]">
-      <img
-        :src="icons.facebook"
-        alt="Facebook"
-        class="w-11 h-11"
-      />
-      <img :src="icons.instagram" alt="Instagram" class="w-11 h-11" />
-      <img :src="icons.x" alt="X" class="w-11 h-11" />
+      <a href="https://facebook.com" target="_blank" rel="noopener" aria-label="Facebook">
+        <img :src="icons.facebook" alt="Facebook" class="w-11 h-11" />
+      </a>
+      <a href="https://instagram.com" target="_blank" rel="noopener" aria-label="Instagram">
+        <img :src="icons.instagram" alt="Instagram" class="w-11 h-11" />
+      </a>
+      <a href="https://x.com" target="_blank" rel="noopener" aria-label="X">
+        <img :src="icons.x" alt="X" class="w-11 h-11" />
+      </a>
     </div>
   </div>
 </template>
@@ -25,6 +33,7 @@ import { useBurgerMenuStore } from "~/shared/store/useBurgerMenu";
 import { useAssets } from "~/shared/composables/useAssets";
 
 const { t } = useI18n();
+const localePath = useLocalePath();
 const { icons } = useAssets();
 
 const isTablet = ref(false);
@@ -49,11 +58,7 @@ const items = [
   },
   {
     label: t("home.store"),
-    path: "/store",
-  },
-  {
-    label: t("home.dashboard"),
-    path: "/dashboard",
+    path: "/stores",
   },
   {
     label: t("home.barcode"),
@@ -65,7 +70,7 @@ const items = [
   },
   {
     label: t("home.faq"),
-    path: "/faq",
+    path: "/faqs",
   },
 ];
 

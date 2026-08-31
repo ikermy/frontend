@@ -29,7 +29,7 @@ export class VerificationTestService {
           data: mockVerificationTestItems,
         };
       } else {
-        response = await this.client.get<VerificationTestItem[]>(apiConfig.endpoints.verificationTest.list);
+        response = await this.client.get<VerificationTestItem[]>(apiConfig.endpoints.verificationTest.list, "barcodegen");
       }
 
       this.store.setItems(response.data);
@@ -58,7 +58,7 @@ export class VerificationTestService {
       };
     }
 
-    return this.client.get<VerificationTestItem>(apiConfig.endpoints.verificationTest.get(id));
+    return this.client.get<VerificationTestItem>(apiConfig.endpoints.verificationTest.get(id), "barcodegen");
   }
 
   /**
@@ -84,7 +84,7 @@ export class VerificationTestService {
           data: newItem,
         };
       } else {
-        response = await this.client.post<VerificationTestItem>(apiConfig.endpoints.verificationTest.create, data);
+        response = await this.client.post<VerificationTestItem>(apiConfig.endpoints.verificationTest.create, data, "barcodegen");
       }
 
       this.store.addItem(response.data);
@@ -111,7 +111,7 @@ export class VerificationTestService {
       };
     }
 
-    return this.client.get<Blob>(apiConfig.endpoints.verificationTest.download(id));
+    return this.client.get<Blob>(apiConfig.endpoints.verificationTest.download(id), "barcodegen");
   }
 }
 

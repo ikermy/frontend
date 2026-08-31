@@ -45,6 +45,8 @@
 </template>
 
 <script setup lang="ts">
+
+definePageMeta({ middleware: "auth" });
 import BalanceBlock from "~/features/wallet/balance/BalanceBlock.vue";
 import BarcodeInfoBlock from "~/features/wallet/BarcodeInfoBlock.vue";
 import SubscriptionInfoBlock from "~/features/wallet/SubscriptionInfoBlock.vue";

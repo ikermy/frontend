@@ -28,6 +28,8 @@
 </template>
 
 <script setup lang="ts">
+
+definePageMeta({ middleware: "auth" });
 import Content from "~/features/referral/TransferModal/content.vue";
 import { useMoneyFormatting } from "~/shared/composables/useMoneyFormatting";
 import { useAssets } from "~/shared/composables/useAssets";

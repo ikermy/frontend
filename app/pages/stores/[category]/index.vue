@@ -13,6 +13,8 @@
 </template>
 
 <script setup lang="ts">
+
+definePageMeta({ middleware: "auth" });
 import ShopSidebar from '~/pages/stores/components/ShopSidebar.vue';
 import ShopCategoryAndSearch from '~/pages/stores/components/ShopCategoryAndSearch.vue';
 import ProductsCard from '~/components/card/ProductsCard.vue';

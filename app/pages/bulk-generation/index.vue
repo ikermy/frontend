@@ -44,6 +44,8 @@
 </template>
 
 <script setup lang="ts">
+
+definePageMeta({ middleware: "auth" });
 import FileUpload from "~/features/bulk-generation/FileUpload.vue";
 import HistorySection from "~/features/bulk-generation/HistorySection.vue";
 import ErrorMessage from "~/features/bulk-generation/ErrorMessage.vue";

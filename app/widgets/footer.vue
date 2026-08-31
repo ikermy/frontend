@@ -3,17 +3,15 @@
     <div class="flex flex-col justify-between min-h-[360px]">
       <h1 class="text-2xl font-roboto uppercase font-bold">Logo</h1>
       <div class="flex gap-[15px]">
-        <img
-          :src="icons.facebook"
-          alt="Facebook"
-          class="w-11 h-11"
-        />
-        <img
-          :src="icons.instagram"
-          alt="Instagram"
-          class="w-11 h-11"
-        />
-        <img :src="icons.x" alt="X" class="w-11 h-11" />
+        <a href="https://facebook.com" target="_blank" rel="noopener" aria-label="Facebook">
+          <img :src="icons.facebook" alt="Facebook" class="w-11 h-11" />
+        </a>
+        <a href="https://instagram.com" target="_blank" rel="noopener" aria-label="Instagram">
+          <img :src="icons.instagram" alt="Instagram" class="w-11 h-11" />
+        </a>
+        <a href="https://x.com" target="_blank" rel="noopener" aria-label="X">
+          <img :src="icons.x" alt="X" class="w-11 h-11" />
+        </a>
       </div>
     </div>
     <div class="flex gap-[82px]">
@@ -64,13 +62,15 @@
       </div>
     </div>
     <div class="flex flex-col justify-between">
-      <Button
-        color="primary"
-        text-color="dark"
-        class="px-4 py-2 text-xs h-9 max-w-[84px] self-end"
-      >
-        {{ $t("sign_in.title") }}
-      </Button>
+      <NuxtLink :to="localePath('/sign-in')" class="self-end">
+        <Button
+          color="primary"
+          text-color="dark"
+          class="px-4 py-2 text-xs h-9 max-w-[84px] self-end"
+        >
+          {{ $t("sign_in.title") }}
+        </Button>
+      </NuxtLink>
       <div class="flex flex-col">
         <h5 class="mt-[20px] text-sm text-white/75">© 2025 Barcode AI</h5>
         <h5 class="mt-[5px] text-sm text-white/75">All Rights Reserved</h5>
@@ -88,13 +88,15 @@
     <div class="flex flex-col">
       <div class="flex justify-between">
         <h1 class="text-2xl font-roboto uppercase font-bold">Logo</h1>
-        <Button
-          color="white"
-          text-color="dark"
-          class="px-4 py-2 text-xs h-9 max-w-[84px] self-end"
-        >
-          {{ $t("sign_in.title") }}
-        </Button>
+        <NuxtLink :to="localePath('/sign-in')" class="self-end">
+          <Button
+            color="white"
+            text-color="dark"
+            class="px-4 py-2 text-xs h-9 max-w-[84px] self-end"
+          >
+            {{ $t("sign_in.title") }}
+          </Button>
+        </NuxtLink>
       </div>
       <div class="flex flex-col">
         <div class="w-full h-[1px] bg-bg-tertiary mt-4" />
@@ -144,17 +146,15 @@
         </div>
       </div>
       <div class="flex gap-[15px] mt-4">
-        <img
-          :src="icons.facebook"
-          alt="Facebook"
-          class="w-11 h-11"
-        />
-        <img
-          :src="icons.instagram"
-          alt="Instagram"
-          class="w-11 h-11"
-        />
-        <img :src="icons.x" alt="X" class="w-11 h-11" />
+        <a href="https://facebook.com" target="_blank" rel="noopener" aria-label="Facebook">
+          <img :src="icons.facebook" alt="Facebook" class="w-11 h-11" />
+        </a>
+        <a href="https://instagram.com" target="_blank" rel="noopener" aria-label="Instagram">
+          <img :src="icons.instagram" alt="Instagram" class="w-11 h-11" />
+        </a>
+        <a href="https://x.com" target="_blank" rel="noopener" aria-label="X">
+          <img :src="icons.x" alt="X" class="w-11 h-11" />
+        </a>
       </div>
       <div class="flex flex-col mt-4">
         <h5 class="text-sm text-white/75">© 2025 Barcode AI</h5>

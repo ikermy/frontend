@@ -29,7 +29,7 @@ export class ReferralService {
           data: mockReferralBalance,
         };
       } else {
-        response = await this.client.get<ReferralBalance>(apiConfig.endpoints.referral.balance);
+        response = await this.client.get<ReferralBalance>(apiConfig.endpoints.referral.balance, "billing");
       }
 
       this.store.setBalance(response.data);
@@ -59,7 +59,7 @@ export class ReferralService {
           data: mockReferralStats,
         };
       } else {
-        response = await this.client.get<ReferralStats>(apiConfig.endpoints.referral.stats);
+        response = await this.client.get<ReferralStats>(apiConfig.endpoints.referral.stats, "billing");
       }
 
       this.store.setStats(response.data);
@@ -90,7 +90,7 @@ export class ReferralService {
         };
       } else {
         // This endpoint might not exist in the config, so we'll use a generic approach
-        response = await this.client.get<ReferralProgram>(apiConfig.endpoints.referral.stats);
+        response = await this.client.get<ReferralProgram>(apiConfig.endpoints.referral.stats, "billing");
       }
 
       this.store.setProgram(response.data);
@@ -115,7 +115,7 @@ export class ReferralService {
       };
     }
 
-    return this.client.post(apiConfig.endpoints.referral.transfer, data);
+    return this.client.post(apiConfig.endpoints.referral.transfer, data, "billing");
   }
 }
 

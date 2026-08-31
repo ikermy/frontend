@@ -7,6 +7,9 @@ export const useBurgerMenuStore = defineStore("burgerMenu", {
       console.log("toggle");
       this.isBurgerOpen = !this.isBurgerOpen;
     },
+    close() {
+      this.isBurgerOpen = false;
+    },
   },
   getters: {
     isOpen: state => state.isBurgerOpen,

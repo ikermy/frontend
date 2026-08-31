@@ -27,6 +27,8 @@
 </template>
 
 <script setup lang="ts">
+
+definePageMeta({ middleware: "auth" });
 import OrderDetailsItem from "~/features/store-orders/OrderDetailsItem.vue";
 import { useAssets } from "~/shared/composables/useAssets";
 

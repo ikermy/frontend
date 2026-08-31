@@ -3,25 +3,45 @@
  * Centralized API client with mock/real API switching
  */
 
-import { apiConfig } from '~/shared/config/api.config';
+import { apiConfig, serviceURLs } from '~/shared/config/api.config';
 import type { ApiMode, ApiResponse, ApiError } from './types';
+
+// Целевые сервисы, к которым фронт ходит напрямую (кроме auth → BFF)
+export type ApiService =
+  | 'bff'        // BFF (baseURL = /api/v1)
+  | 'barcodegen'
+  | 'billing'
+  | 'ai'
+  | 'history';
 
 export class ApiClient {
   private mode: ApiMode;
   private baseURL: string;
 
-  constructor(mode: ApiMode = 'mock') {
+  constructor(mode?: ApiMode) {
     const config = useRuntimeConfig();
-    this.mode = mode || (process.env.NUXT_PUBLIC_API_MODE as ApiMode) || 'mock';
+    // В Nuxt читаем из runtimeConfig.public (публичные env-переменные), а не process.env.
+    this.mode = mode || (config.public.apiMode as ApiMode) || 'mock';
     this.baseURL = config.public.apiBaseUrl || apiConfig.baseURL;
   }
 
   /**
-   * Get full API URL
+   * Get base URL for a target service
    */
-  private getApiUrl(endpoint: string): string {
+  private getBaseURL(service: ApiService = 'bff'): string {
+    if (service === 'bff') {
+      return this.baseURL; // /api/v1
+    }
+    return serviceURLs[service];
+  }
+
+  /**
+   * Get full API URL for a service
+   */
+  private getApiUrl(endpoint: string, service: ApiService = 'bff'): string {
+    const base = this.getBaseURL(service);
     const cleanEndpoint = endpoint.startsWith('/') ? endpoint.slice(1) : endpoint;
-    return `${this.baseURL}/${cleanEndpoint}`;
+    return `${base}/${cleanEndpoint}`;
   }
 
   /**
@@ -29,7 +49,8 @@ export class ApiClient {
    */
   async request<T = any>(
     endpoint: string,
-    options: RequestInit = {}
+    options: RequestInit = {},
+    service: ApiService = 'bff'
   ): Promise<ApiResponse<T>> {
     if (this.mode === 'mock') {
       // In mock mode, we'll use mock handlers
@@ -37,15 +58,23 @@ export class ApiClient {
       throw new Error('Mock mode should be handled by service layer');
     }
 
-    const url = this.getApiUrl(endpoint);
-    
+    const url = this.getApiUrl(endpoint, service);
+
+    // Добавляем JWT (Authorization Bearer) из cookie, если есть.
+    // Читаем через document.cookie (работает вне setup-контекста).
+    const token = readCookie("auth_token");
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json',
+      ...(options.headers as Record<string, string>),
+    };
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
+
     try {
       const response = await fetch(url, {
         ...options,
-        headers: {
-          'Content-Type': 'application/json',
-          ...options.headers,
-        },
+        headers,
       });
 
       if (!response.ok) {
@@ -74,45 +103,45 @@ export class ApiClient {
   /**
    * GET request
    */
-  async get<T = any>(endpoint: string): Promise<ApiResponse<T>> {
-    return this.request<T>(endpoint, { method: 'GET' });
+  async get<T = any>(endpoint: string, service?: ApiService): Promise<ApiResponse<T>> {
+    return this.request<T>(endpoint, { method: 'GET' }, service);
   }
 
   /**
    * POST request
    */
-  async post<T = any>(endpoint: string, data?: any): Promise<ApiResponse<T>> {
+  async post<T = any>(endpoint: string, data?: any, service?: ApiService): Promise<ApiResponse<T>> {
     return this.request<T>(endpoint, {
       method: 'POST',
       body: data ? JSON.stringify(data) : undefined,
-    });
+    }, service);
   }
 
   /**
    * PUT request
    */
-  async put<T = any>(endpoint: string, data?: any): Promise<ApiResponse<T>> {
+  async put<T = any>(endpoint: string, data?: any, service?: ApiService): Promise<ApiResponse<T>> {
     return this.request<T>(endpoint, {
       method: 'PUT',
       body: data ? JSON.stringify(data) : undefined,
-    });
+    }, service);
   }
 
   /**
    * PATCH request
    */
-  async patch<T = any>(endpoint: string, data?: any): Promise<ApiResponse<T>> {
+  async patch<T = any>(endpoint: string, data?: any, service?: ApiService): Promise<ApiResponse<T>> {
     return this.request<T>(endpoint, {
       method: 'PATCH',
       body: data ? JSON.stringify(data) : undefined,
-    });
+    }, service);
   }
 
   /**
    * DELETE request
    */
-  async delete<T = any>(endpoint: string): Promise<ApiResponse<T>> {
-    return this.request<T>(endpoint, { method: 'DELETE' });
+  async delete<T = any>(endpoint: string, service?: ApiService): Promise<ApiResponse<T>> {
+    return this.request<T>(endpoint, { method: 'DELETE' }, service);
   }
 
   /**
@@ -135,9 +164,15 @@ let apiClientInstance: ApiClient | null = null;
 
 export function getApiClient(): ApiClient {
   if (!apiClientInstance) {
-    const mode = (process.env.NUXT_PUBLIC_API_MODE as ApiMode) || 'mock';
-    apiClientInstance = new ApiClient(mode);
+    apiClientInstance = new ApiClient();
   }
   return apiClientInstance;
+}
+
+// Чтение cookie через document.cookie (работает вне setup-контекста).
+function readCookie(name: string): string {
+  if (typeof document === "undefined") return "";
+  const match = document.cookie.match(new RegExp(`(?:^|; )${name}=([^;]*)`));
+  return match ? decodeURIComponent(match[1]) : "";
 }
 

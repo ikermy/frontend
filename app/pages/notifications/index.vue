@@ -29,6 +29,8 @@
 </template>
 
 <script setup lang="ts">
+
+definePageMeta({ middleware: "auth" });
 import NotificationTabs from "~/features/notifications/NotificationTabs.vue";
 import NotificationDateGroup from "~/features/notifications/NotificationDateGroup.vue";
 import NotificationCategories from "~/features/notifications/NotificationCategories.vue";

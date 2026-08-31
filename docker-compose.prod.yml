@@ -1,6 +1,7 @@
 services:
-  # Nuxt static frontend served by nginx. Envoy (already running on the VPS)
-  # routes `/` -> `frontend:80` inside the shared barcode_shared network.
+  # Nuxt static frontend served by nginx.
+  # В проде HTTPS терминирует Envoy (bff) с Let's Encrypt, фронт остаётся на HTTP (80)
+  # внутри docker-сети barcode_shared. Envoy рутит /* → frontend:80 и /api/v1 → bff:8080.
   frontend:
     image: ${REGISTRY:-ghcr.io}/${IMAGE:-ikermy/frontend}:${TAG:-latest}
     container_name: frontend

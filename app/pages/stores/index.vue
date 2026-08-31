@@ -37,6 +37,8 @@
 </template>
 
 <script setup lang="ts">
+
+definePageMeta({ middleware: "auth" });
 import Button from '~/shared/ui/Button.vue';
 import ProductsCard from '~/components/card/ProductsCard.vue';
 import ShopCategoryAndSearch from './components/ShopCategoryAndSearch.vue';

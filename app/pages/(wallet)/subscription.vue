@@ -85,7 +85,7 @@
         </div>
       </div>
 
-      <Button color="white" text-color="dark" class="mt-[24px]">
+      <Button color="white" text-color="dark" class="mt-[24px]" :on-click="() => router.push('/wallet/pay')">
         {{ $t("modals.buyPackages.buy") }}
         ${{ packages[selectedPackage - 1]?.price }}
       </Button>
@@ -94,6 +94,8 @@
 </template>
 
 <script setup lang="ts">
+
+definePageMeta({ middleware: "auth" });
 import Button from "~/shared/ui/Button.vue";
 import { useAssets } from "~/shared/composables/useAssets";
 

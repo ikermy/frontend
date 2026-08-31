@@ -20,18 +20,20 @@
             @click="copyToClipboard('1Pn85Vjc2zN3rfvDYXmZUsfT1p9j4')" />
         </div>
       </div>
-      <Button color="white" text-color="dark" class="mt-12 w-full">
+      <Button color="white" text-color="dark" class="mt-12 w-full" :on-click="() => navigateTo(localePath('/wallet/top-up'))">
         {{ $t("modals.pay.topup_with_oracle") }}
       </Button>
       <div class="flex justify-around w-full mt-4 gap-2">
         <div
-          class="text-lg font-medium bg-white/10 rounded-[12px] py-3 flex justify-center w-full items-center gap-[2px] cursor-pointer">
+          class="text-lg font-medium bg-white/10 rounded-[12px] py-3 flex justify-center w-full items-center gap-[2px] cursor-pointer"
+          @click="copyToClipboard('1Pn85Vjc2zN3rfvDYXmZUsfT1p9j4')">
           <img :src="icons.code" alt="copy" class="w-5 h-5" />
 
           {{ $t("modals.pay.share_code") }}
         </div>
         <div
-          class="text-lg font-medium bg-white/10 rounded-[12px] py-3 flex justify-center w-full items-center gap-[2px] cursor-pointer">
+          class="text-lg font-medium bg-white/10 rounded-[12px] py-3 flex justify-center w-full items-center gap-[2px] cursor-pointer"
+          @click="copyToClipboard('1Pn85Vjc2zN3rfvDYXmZUsfT1p9j4')">
           <img :src="icons.address" alt="copy" class="w-5 h-5" />
 
           {{ $t("modals.pay.share_addy") }}
@@ -45,9 +47,13 @@
 </template>
 
 <script setup lang="ts">
+
+definePageMeta({ middleware: "auth" });
 import { useAssets } from "~/shared/composables/useAssets";
 import Button from "~/shared/ui/Button.vue";
 const { icons } = useAssets();
+
+const localePath = useLocalePath();
 
 const copyToClipboard = (text: string) => {
   navigator.clipboard.writeText(text);

@@ -14,7 +14,8 @@ export default defineNuxtConfig({
   ],
 
   devServer: {
-    port: 3002,
+    // Порт можно переопределить через NUXT_PORT (в docker-контейнере это 80).
+    port: Number(process.env.NUXT_PORT) || 3002,
   },
   fonts: {
     families: [{ name: "Space Grotesk", provider: "google" }],
@@ -37,6 +38,35 @@ export default defineNuxtConfig({
       allowedHosts: process.env.NUXT_ALLOWED_HOSTS
         ? process.env.NUXT_ALLOWED_HOSTS.split(",")
         : [],
+      // Dev: проксируем /api/v1 → BFF (в docker-сети barcode_shared).
+      // Только для локальной разработки; в проде тот же origin через Envoy.
+      proxy: {
+        "/api/v1": {
+          target: process.env.NUXT_PROXY_API_TARGET || "http://bff:8080",
+          changeOrigin: true,
+        },
+        // Прямые вызовы сервисов (в проде — через Envoy/прямые docker-имена)
+        "/barcodegen": {
+          target: process.env.NUXT_PROXY_BARCODEGEN_TARGET || "http://barcodegen:8080",
+          changeOrigin: true,
+          rewrite: (path: string) => path.replace(/^\/barcodegen/, ""),
+        },
+        "/billing": {
+          target: process.env.NUXT_PROXY_BILLING_TARGET || "http://billing:3000",
+          changeOrigin: true,
+          rewrite: (path: string) => path.replace(/^\/billing/, ""),
+        },
+        "/ai": {
+          target: process.env.NUXT_PROXY_AI_TARGET || "http://ai-service:8080",
+          changeOrigin: true,
+          rewrite: (path: string) => path.replace(/^\/ai/, ""),
+        },
+        "/history": {
+          target: process.env.NUXT_PROXY_HISTORY_TARGET || "http://history:3000",
+          changeOrigin: true,
+          rewrite: (path: string) => path.replace(/^\/history/, ""),
+        },
+      },
     },
     plugins: [tailwindcss()],
   },
@@ -49,6 +79,10 @@ export default defineNuxtConfig({
     public: {
       apiBaseUrl: process.env.NUXT_PUBLIC_API_BASE_URL || "/api/v1",
       apiMode: process.env.NUXT_PUBLIC_API_MODE || "mock",
+      // Telegram OAuth: data-telegram-login (без @) и data-auth-url (redirect после входа).
+      // Используются реальным Telegram-виджетом в deploy; сейчас — конфиг для mock.
+      telegramBotUsername: process.env.NUXT_PUBLIC_TELEGRAM_BOT_USERNAME || "",
+      telegramAuthUrl: process.env.NUXT_PUBLIC_TELEGRAM_AUTH_URL || "",
     },
   },
 });

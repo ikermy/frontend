@@ -20,6 +20,8 @@
 </template>
 
 <script setup lang="ts">
+
+definePageMeta({ middleware: "auth" });
 import ReferralBalanceBlock from "~/features/referral/ReferralBalanceBlock.vue";
 import ReferralStatsBlock from "~/features/referral/ReferralStatsBlock.vue";
 import ReferralProgramCard from "~/features/referral/ReferralProgramCard.vue";

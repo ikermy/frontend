@@ -30,7 +30,8 @@ export class LookupService {
         };
       } else {
         response = await this.client.get<LookupItem[]>(
-          apiConfig.endpoints.lookup.list
+          apiConfig.endpoints.lookup.list,
+          "barcodegen"
         );
       }
 
@@ -60,7 +61,7 @@ export class LookupService {
       };
     }
 
-    return this.client.get<LookupItem>(apiConfig.endpoints.lookup.get(id));
+    return this.client.get<LookupItem>(apiConfig.endpoints.lookup.get(id), "barcodegen");
   }
 
   /**
@@ -94,7 +95,8 @@ export class LookupService {
       } else {
         response = await this.client.post<LookupItem>(
           apiConfig.endpoints.lookup.create,
-          data
+          data,
+          "barcodegen"
         );
       }
 

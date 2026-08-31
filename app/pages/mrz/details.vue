@@ -67,6 +67,8 @@
 </template>
 
 <script setup lang="ts">
+
+definePageMeta({ middleware: "auth" });
 import Button from "~/shared/ui/Button.vue";
 import MRZDataFields from "~/features/mrz/MRZDataFields.vue";
 import MRZVerification from "~/features/mrz/MRZVerification.vue";
