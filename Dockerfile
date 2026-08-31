@@ -39,6 +39,8 @@ ARG NGINX_TLS=dev
 ENV NGINX_TLS=$NGINX_TLS
 
 COPY --from=build /app/.output/public /usr/share/nginx/html
+# Удаляем дефолтный конфиг nginx (он не имеет SPA-fallback и конфликтует за port 80).
+RUN rm -f /etc/nginx/conf.d/default.conf
 COPY nginx.conf /etc/nginx/conf.d/dev.conf
 COPY nginx.prod.conf /etc/nginx/conf.d/prod.conf
 
