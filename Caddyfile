@@ -1,7 +1,0 @@
-# Caddy reverse proxy — auto-provisions TLS via Let's Encrypt.
-# DOMAIN is injected from the .env file (see docker-compose.prod.yml).
-
-{$DOMAIN} {
-	encode gzip
-	reverse_proxy nuxt-app:3000
-}
