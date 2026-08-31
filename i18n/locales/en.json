@@ -68,7 +68,8 @@
   },
   "sign_in": {
     "title": "Sign in",
-    "or_create_account": "or Create an account"
+    "or_create_account": "or Create an account",
+    "invalid_credentials": "Invalid email or password"
   },
   "sidebar": {
     "to_home": "To Home",

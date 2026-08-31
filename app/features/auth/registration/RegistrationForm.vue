@@ -25,7 +25,7 @@
 
     <Button
       size="md"
-      :color="isDark ? 'white' : 'primary'"
+      color="white"
       text-color="dark"
       class="w-full mt-14"
       :loading="loading"
@@ -47,7 +47,6 @@ import Button from "@/shared/ui/Button.vue";
 import { getAuthService } from "~/shared/api/services";
 
 const localePath = useLocalePath();
-const isDark = computed(() => useColorMode().value === "dark");
 
 const username = ref("");
 const email = ref("");

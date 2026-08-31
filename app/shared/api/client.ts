@@ -78,10 +78,17 @@ export class ApiClient {
       });
 
       if (!response.ok) {
-        const error: ApiError = {
-          message: response.statusText,
-          code: `HTTP_${response.status}`,
-        };
+        // Пытаемся извлечь человекочитаемое сообщение из JSON-тела BFF ({ code, message }).
+        let message = response.statusText;
+        let code = `HTTP_${response.status}`;
+        try {
+          const body = await response.json();
+          if (body?.message) message = body.message;
+          if (body?.code) code = body.code;
+        } catch {
+          // тело не JSON — оставляем statusText
+        }
+        const error: ApiError = { message, code };
         throw error;
       }
 

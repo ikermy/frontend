@@ -42,8 +42,8 @@ import { getAuthService } from "~/shared/api/services";
 import { useAuthStore } from "~/shared/store/useAuth";
 
 const localePath = useLocalePath();
-const isDark = computed(() => useColorMode().value === "dark");
 const authStore = useAuthStore();
+const { t } = useI18n();
 
 const email = ref("");
 const password = ref("");
@@ -68,7 +68,12 @@ async function handleSubmit() {
     await authStore.loadProfile();
     await navigateTo(localePath("/"));
   } catch (error: any) {
-    errorMessage.value = error.message || "Sign in failed. Please try again.";
+    // 401 — неверный email/пароль; прочее — ошибка сервера.
+    if (error?.code === "UNAUTHORIZED" || error?.code === "HTTP_401") {
+      errorMessage.value = t("sign_in.invalid_credentials");
+    } else {
+      errorMessage.value = error.message || "Sign in failed. Please try again.";
+    }
   } finally {
     loading.value = false;
   }
