@@ -79,7 +79,6 @@
           :placeholder="$t('settings.email')"
           type="email"
           :error="getFieldError('email')"
-          :disabled="isTelegramAccount"
           @input="(e: any) => handleFieldChange('email', e.target.value)"
           @blur="handleFieldBlur('email')"
         />
@@ -163,7 +162,7 @@
           type="text"
           class="bg-transparent text-text-tertiary outline-none"
           :placeholder="$t('settings.telegram_link')"
-          :disabled="isTelegramAccount"
+          disabled
           @input="(e: any) => handleFieldChange('telegramLink', e.target.value)"
           @blur="handleFieldBlur('telegramLink')"
         />
@@ -171,6 +170,17 @@
       <span v-if="getFieldError('telegramLink')" class="text-red-500 text-xs">
         {{ getFieldError("telegramLink") }}
       </span>
+
+      <!-- Привязка/смена Telegram через виджет.
+           Telegram-аккаунт: обновляет identity (приоритет у данных виджета).
+           Email-аккаунт: сохраняет только telegram username (ник), убирая дубль. -->
+      <div class="mt-1">
+        <TelegramAuthButton
+          mode="change"
+          :label="isTelegramAccount ? $t('settings.change_telegram') : $t('settings.connect_telegram')"
+          @success="handleTelegramChanged"
+        />
+      </div>
     </div>
 
     <!-- Success/Error Messages -->
@@ -219,6 +229,7 @@
 <script setup lang="ts">
 import Input from "~/shared/ui/Input.vue";
 import Button from "~/shared/ui/Button.vue";
+import TelegramAuthButton from "~/features/auth/TelegramAuthButton.vue";
 import ChangePasswordModal from "./ChangePasswordModal/index.vue";
 import ForgotPasswordModal from "./ForgotPasswordModal/index.vue";
 import ConfirmPasswordModal from "./ConfirmPasswordModal/index.vue";
@@ -310,9 +321,16 @@ const validationRules = {
     { required: true, message: t("validation.full_name_required") },
     { minLength: 2, message: t("validation.full_name_min_length") },
     { maxLength: 50, message: t("validation.full_name_max_length") },
+    {
+      // Совпадает с серверной валидацией nickname (auth.changeNickname):
+      // только буквы, цифры, пробелы, подчёркивания и дефисы.
+      pattern: /^[a-zA-Z0-9\s_-]+$/,
+      message: t("validation.nickname_invalid"),
+    },
   ],
   email: [
-    { required: true, message: t("validation.email_required") },
+    // Email опционален: telegram-аккаунты могут сохранить профиль без email.
+    // Проверка формата срабатывает только если поле не пустое.
     { email: true, message: t("validation.email_invalid") },
   ],
   password: [],
@@ -364,6 +382,28 @@ const submitSettings = async (formData: SettingsFormData) => {
     await client.post(apiConfig.endpoints.settings.uploadAvatar, {
       photo: photoBase64,
     });
+  }
+
+  // Telegram-аккаунт: привязываем email (email-only, без смены пароля).
+  // Валидация формата — на клиенте; занятость email проверяет Auth (ALREADY_EXISTS).
+  if (telegramAccount) {
+    const email = (formData.email || "").trim();
+    if (email) {
+      try {
+        await authService.linkEmail(email);
+      } catch (err: any) {
+        const message: string = err?.message || "";
+        // Извлекаем человекочитаемое сообщение об ошибке из BFF/grpc-обёртки.
+        const friendly = /already in use/i.test(message)
+          ? t("settings.email_already_in_use")
+          : /already has a real email/i.test(message)
+            ? t("settings.email_already_linked")
+            : null;
+        const e = new Error(friendly || t("settings.email_link_failed"));
+        (e as any).code = err?.code || "EMAIL_LINK_ERROR";
+        throw e;
+      }
+    }
   }
 
   if (!telegramAccount) {
@@ -510,6 +550,12 @@ const handleFieldChange = (
 const handleLogout = async () => {
   authStore.logout();
   await navigateTo(localePath("/"));
+};
+
+// Telegram identity успешно изменён через виджет — перезагружаем профиль и форму.
+const handleTelegramChanged = async () => {
+  await authStore.loadProfile();
+  await loadProfile();
 };
 
 // Watch for validation errors and update form errors

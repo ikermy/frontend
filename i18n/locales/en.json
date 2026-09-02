@@ -97,7 +97,21 @@
   },
   "settings": {
     "title": "Settings",
-    "change_password": "Change Password",
+    "change_password": {
+      "title": "Change Password",
+      "old_password": "Old password",
+      "new_password": "New password",
+      "confirm_password": "Confirm new password",
+      "change": "Change",
+      "forgot_password": "Forgot password?",
+      "error_invalid_current": "Incorrect current password.",
+      "error_same": "The new password must differ from the current one.",
+      "error_weak": "The new password does not meet the requirements.",
+      "error_required": "Please fill in all fields.",
+      "error_mismatch": "New passwords do not match.",
+      "error": "Failed to change password. Please try again.",
+      "success": "Password changed successfully."
+    },
     "change_password_title": "Change Password",
     "old_password": "Old password",
     "new_password": "New password",
@@ -115,7 +129,12 @@
     "uploading": "Uploading",
     "saving": "Saving...",
     "save_changes": "Save changes",
-    "update_success": "Settings updated successfully"
+    "update_success": "Settings updated successfully",
+    "change_telegram": "Change Telegram",
+    "connect_telegram": "Connect Telegram",
+    "email_link_failed": "Failed to save email. Please try again.",
+    "email_already_in_use": "This email is already in use by another account.",
+    "email_already_linked": "This account already has a real email linked."
   },
   "bulk-generation": {
     "title": "Bulk Generation",
@@ -418,6 +437,7 @@
     "full_name_required": "Full name is required",
     "full_name_min_length": "Full name must be at least 2 characters",
     "full_name_max_length": "Full name must be no more than 50 characters",
+    "nickname_invalid": "Nickname can only contain letters, numbers, spaces, underscores, and hyphens",
     "email_required": "Email is required",
     "email_invalid": "Please enter a valid email address",
     "password_required": "Password is required",

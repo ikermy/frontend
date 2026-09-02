@@ -94,6 +94,49 @@ export class AuthService {
   }
 
   /**
+   * Сменить/обновить Telegram identity пользователя (для telegram-аккаунтов).
+   * Приоритет у свежих данных от виджета; старые данные аудируются в Auth.
+   * POST /api/v1/settings/telegram-account → Auth.changeTelegramAccount.
+   */
+  async changeTelegramAccount(data: TelegramAuthData): Promise<ApiResponse<{ success: boolean }>> {
+    if (this.client.getMode() === 'mock') {
+      await mockTelegramAuth();
+      return { data: { success: true } };
+    }
+
+    return this.client.post<{ success: boolean }>(
+      apiConfig.endpoints.settings.changeTelegram,
+      {
+        id: data.id,
+        first_name: data.first_name,
+        last_name: data.last_name || "",
+        username: data.username || "",
+        photo_url: data.photo_url || "",
+        auth_date: data.auth_date,
+        hash: data.hash,
+      }
+    );
+  }
+
+  /**
+   * Сменить пароль пользователя. POST /api/v1/settings/password → Auth.changePassword.
+   * При неверном текущем пароле Auth возвращает ошибку (Invalid current password).
+   */
+  async changePassword(
+    currentPassword: string,
+    newPassword: string
+  ): Promise<ApiResponse<{ success: boolean }>> {
+    if (this.client.getMode() === 'mock') {
+      return { data: { success: true } };
+    }
+
+    return this.client.post<{ success: boolean }>(apiConfig.endpoints.settings.changePassword, {
+      current_password: currentPassword,
+      new_password: newPassword,
+    });
+  }
+
+  /**
    * Sign out (best-effort на сервере; локально cookie чистит AuthStore.logout).
    */
   async signOut(): Promise<ApiResponse<{ success: boolean }>> {
@@ -130,6 +173,20 @@ export class AuthService {
     }
 
     return this.client.get<UserProfile>(apiConfig.endpoints.settings.get);
+  }
+
+  /**
+   * Привязать email к аккаунту (для telegram-аккаунтов). POST /api/v1/settings/email → Auth.
+   * email-only: пароль не передаём, пароль и origin не меняются.
+   */
+  async linkEmail(email: string): Promise<ApiResponse<{ success: boolean }>> {
+    if (this.client.getMode() === 'mock') {
+      return { data: { success: true } };
+    }
+
+    return this.client.post<{ success: boolean }>(apiConfig.endpoints.settings.linkEmail, {
+      email,
+    });
   }
 
   /**

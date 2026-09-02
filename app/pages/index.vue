@@ -1,9 +1,5 @@
 <template>
   <div class="flex flex-col gap-4 relative">
-    <!-- <Header /> -->
-    <div class="relative">
-      <BurgerMenu />
-    </div>
     <div class="flex flex-col gap-2 mt-[110px] desktop:px-[76px] px-[24px]">
       <h1 class="text-[64px] font-normal uppercase font-hector hidden desktop:block">
         {{ $t("home.title") }}
@@ -69,14 +65,10 @@
         </div>
       </UCarousel>
     </div>
-    <Footer class="mt-[140px]" />
   </div>
 </template>
 
 <script setup lang="ts">
-import BurgerMenu from "~/widgets/burger-menu.vue";
-import Header from "~/widgets/header.vue";
-import Footer from "~/widgets/footer.vue";
 import { useAssets } from "~/shared/composables/useAssets";
 
 const { icons } = useAssets();

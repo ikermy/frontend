@@ -105,6 +105,8 @@ export const apiConfig = {
       uploadAvatar: "/settings/avatar",
       updateTelegram: "/settings/telegram",
       updateNickname: "/settings/nickname",
+      linkEmail: "/settings/email",
+      changeTelegram: "/settings/telegram-account",
     },
 
     // Store Orders (→ history)

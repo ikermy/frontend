@@ -28,6 +28,8 @@ onMounted(async () => {
   console.log(debugCtx, "query:", JSON.stringify(route.query));
 
   const q = route.query;
+  // mode=change — это смена Telegram identity в настройках (уже авторизованный пользователь).
+  const isChangeMode = q.mode === "change";
 
   const id = String(q.id ?? "");
   const hash = String(q.hash ?? "");
@@ -61,6 +63,16 @@ onMounted(async () => {
   });
 
   try {
+    if (isChangeMode) {
+      // Смена Telegram identity: пользователь уже авторизован, токен не меняем.
+      console.log(debugCtx, "calling changeTelegramAccount...");
+      await getAuthService().changeTelegramAccount(payload);
+      await authStore.loadProfile();
+      console.log(debugCtx, "telegram changed, redirecting to /settings");
+      await navigateTo(localePath("/settings"));
+      return;
+    }
+
     console.log(debugCtx, "calling telegramAuth...");
     const { data } = await getAuthService().telegramAuth(payload);
     console.log(debugCtx, "telegramAuth OK, accessToken len:", data.accessToken?.length);

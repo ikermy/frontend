@@ -144,6 +144,12 @@ export interface SignInPayload {
   password: string;
 }
 
+// Привязка email к аккаунту (email-only: password опционален, не меняется).
+export interface LinkEmailPayload {
+  email: string;
+  password?: string;
+}
+
 export interface AuthTokens {
   access_token: string;
   refresh_token: string;
