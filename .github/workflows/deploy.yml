@@ -64,6 +64,9 @@ jobs:
   deploy:
     needs: build-and-push
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: read
     environment:
       name: production
     steps:
@@ -89,6 +92,8 @@ jobs:
           COMPOSE_FILE: ${{ env.COMPOSE_FILE }}
           DEPLOY_DIR: ${{ env.DEPLOY_DIR }}
           DOMAIN: ${{ secrets.DOMAIN }}
+          GHCR_USER: ${{ github.actor }}
+          GHCR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NUXT_PUBLIC_API_BASE_URL: ${{ secrets.NUXT_PUBLIC_API_BASE_URL }}
           NUXT_PUBLIC_API_MODE: ${{ secrets.NUXT_PUBLIC_API_MODE }}
           NUXT_PUBLIC_TELEGRAM_BOT_USERNAME: ${{ secrets.NUXT_PUBLIC_TELEGRAM_BOT_USERNAME }}
@@ -98,7 +103,7 @@ jobs:
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: 22
-          envs: REGISTRY,IMAGE,SHA,COMPOSE_FILE,DEPLOY_DIR,DOMAIN,NUXT_PUBLIC_API_BASE_URL,NUXT_PUBLIC_API_MODE,NUXT_PUBLIC_TELEGRAM_BOT_USERNAME,NUXT_PUBLIC_TELEGRAM_AUTH_URL
+          envs: REGISTRY,IMAGE,SHA,COMPOSE_FILE,DEPLOY_DIR,DOMAIN,GHCR_USER,GHCR_TOKEN,NUXT_PUBLIC_API_BASE_URL,NUXT_PUBLIC_API_MODE,NUXT_PUBLIC_TELEGRAM_BOT_USERNAME,NUXT_PUBLIC_TELEGRAM_AUTH_URL
           script: |
             set -e
             cd $DEPLOY_DIR
@@ -114,6 +119,9 @@ jobs:
             NUXT_PUBLIC_TELEGRAM_BOT_USERNAME=$NUXT_PUBLIC_TELEGRAM_BOT_USERNAME
             NUXT_PUBLIC_TELEGRAM_AUTH_URL=$NUXT_PUBLIC_TELEGRAM_AUTH_URL
             EOF
+
+            # GHCR requires authentication for pulls, even for the same repo.
+            echo "$GHCR_TOKEN" | docker login ghcr.io -u "$GHCR_USER" --password-stdin
 
             # Deploy application
             docker compose -f $COMPOSE_FILE pull
