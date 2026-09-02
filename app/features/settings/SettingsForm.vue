@@ -57,13 +57,30 @@
       </div>
     </div>
     <div class="flex flex-col gap-3">
-      <!-- Full Name Input -->
+      <!-- Username (read-only): login-handle, менять нельзя -->
       <div class="flex flex-col gap-1">
+        <span class="text-xs font-medium text-text-tertiary">
+          {{ $t("settings.username") }}
+        </span>
+        <Input
+          :value="authStore.profile.username"
+          type="text"
+          :placeholder="$t('settings.username')"
+          class="bg-transparent text-text-tertiary"
+          disabled
+        />
+      </div>
+
+      <!-- Nickname Input (всегда изменяемый) -->
+      <div class="flex flex-col gap-1">
+        <span class="text-xs font-medium text-text-tertiary">
+          {{ $t("settings.nickname") }}
+        </span>
         <Input
           :value="getFieldValue('fullName')"
-          :placeholder="$t('settings.full_name')"
+          type="text"
+          :placeholder="$t('settings.nickname')"
           :error="getFieldError('fullName')"
-          :disabled="isTelegramAccount"
           @input="(e: any) => handleFieldChange('fullName', e.target.value)"
           @blur="handleFieldBlur('fullName')"
         />
@@ -406,17 +423,17 @@ const submitSettings = async (formData: SettingsFormData) => {
     }
   }
 
+  // Nickname (отображаемое имя) изменяем для любого типа аккаунта (в т.ч. telegram-origin).
+  const fullName = (formData.fullName || "").trim();
+  if (fullName) {
+    await authService.updateNickname(fullName);
+  }
+
   if (!telegramAccount) {
     // Сохраняем Telegram username (без @) в BFF → Auth.
     const tg = (formData.telegramLink || "").trim().replace(/^@/, "").replace(/^https?:\/\/(t\.me|telegram\.me)\//, "");
     if (tg) {
       await authService.updateTelegramUsername(tg);
-    }
-
-    // Сохраняем отображаемое имя (nickname) в BFF → Auth.
-    const fullName = (formData.fullName || "").trim();
-    if (fullName) {
-      await authService.updateNickname(fullName);
     }
   }
 

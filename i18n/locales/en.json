@@ -122,6 +122,8 @@
     "send": "Send",
     "logout": "Log out",
     "full_name": "Full name",
+    "username": "Username",
+    "nickname": "Nickname",
     "email": "Email",
     "password_placeholder": "********",
     "telegram_link": "Telegram link",
