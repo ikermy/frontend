@@ -184,3 +184,20 @@ export interface AuthSession {
   refreshToken: string;
   user?: AuthUser;
 }
+
+// История изменений Linked Telegram Username (вкладка Settings).
+export interface TelegramUsernameHistoryEntry {
+  id: string;
+  telegramUsername: string;
+  previousTelegramUsername: string;
+  eventType: "set" | "changed" | "removed" | "migrated" | string;
+  source: string;
+  changedAt: string;
+}
+
+export interface TelegramUsernameHistoryPage {
+  entries: TelegramUsernameHistoryEntry[];
+  total: number;
+  page: number;
+  limit: number;
+}

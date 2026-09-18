@@ -5,7 +5,7 @@
 
 import { getApiClient } from '../client';
 import { apiConfig } from '~/shared/config/api.config';
-import type { AuthTokens, SignInPayload, SignUpPayload, ApiResponse, UserProfile, TelegramAuthData, TelegramAuthResult } from '../types';
+import type { AuthTokens, SignInPayload, SignUpPayload, ApiResponse, UserProfile, TelegramAuthData, TelegramAuthResult, TelegramUsernameHistoryPage } from '../types';
 import { mockAuthTokens, mockTelegramAuth, mockTelegramSession } from '../mocks';
 
 export class AuthService {
@@ -190,16 +190,19 @@ export class AuthService {
   }
 
   /**
-   * Обновить Telegram username (без @) — POST /api/v1/settings/telegram (через BFF → Auth).
+   * История изменений Telegram username (без @) текущего пользователя.
+   * GET /api/v1/settings/telegram-username-history (через BFF → Auth).
    */
-  async updateTelegramUsername(telegramUsername: string): Promise<ApiResponse<{ success: boolean; telegramUsername: string }>> {
+  async getTelegramUsernameHistory(
+    page = 1,
+    limit = 20,
+  ): Promise<ApiResponse<TelegramUsernameHistoryPage>> {
     if (this.client.getMode() === 'mock') {
-      return { data: { success: true, telegramUsername } };
+      return { data: { entries: [], total: 0, page, limit } };
     }
 
-    return this.client.post<{ success: boolean; telegramUsername: string }>(
-      apiConfig.endpoints.settings.updateTelegram,
-      { telegram: telegramUsername },
+    return this.client.get<TelegramUsernameHistoryPage>(
+      `${apiConfig.endpoints.settings.telegramUsernameHistory}?page=${page}&limit=${limit}`,
     );
   }
 

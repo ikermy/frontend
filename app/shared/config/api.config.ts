@@ -103,10 +103,10 @@ export const apiConfig = {
       update: "/settings",
       changePassword: "/settings/password",
       uploadAvatar: "/settings/avatar",
-      updateTelegram: "/settings/telegram",
       updateNickname: "/settings/nickname",
       linkEmail: "/settings/email",
       changeTelegram: "/settings/telegram-account",
+      telegramUsernameHistory: "/settings/telegram-username-history",
     },
 
     // Store Orders (→ history)

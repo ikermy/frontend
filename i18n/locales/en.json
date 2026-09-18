@@ -43,10 +43,12 @@
     "first_desc": "Sign Up Now to Create AI-Powered, 100% Passing DL Barcodes Instantly!",
     "second_desc": "A single account created on this site will also be valid on the.",
     "login_tg": "Login with Telegram",
+    "signup_tg": "Sign up with Telegram",
     "fullname": "Full Name",
     "email": "Email",
     "password": "Password",
     "or_sign_in": "or sign in",
+    "username_taken": "This username is already taken. Please choose another one.",
     "pdf_project": "PDF_PROJECT"
   },
   "telegramAuth": {
@@ -136,7 +138,18 @@
     "connect_telegram": "Connect Telegram",
     "email_link_failed": "Failed to save email. Please try again.",
     "email_already_in_use": "This email is already in use by another account.",
-    "email_already_linked": "This account already has a real email linked."
+    "email_already_linked": "This account already has a real email linked.",
+    "telegram_username_history_title": "Telegram username history",
+    "telegram_username_history_empty": "No Telegram username changes yet",
+    "telegram_username_history_set": "Set",
+    "telegram_username_history_changed": "Changed",
+    "telegram_username_history_removed": "Removed",
+    "telegram_username_history_migrated": "Imported",
+    "telegram_username_history_show_more": "Show more",
+    "telegram_username_history_error": "Failed to load Telegram username history.",
+    "telegram_already_linked": "This Telegram account is already linked to another user and cannot be moved.",
+    "telegram_id_locked": "This account already has a Telegram linked; it cannot be changed.",
+    "telegram_link_failed": "Failed to connect Telegram. Please try again."
   },
   "bulk-generation": {
     "title": "Bulk Generation",

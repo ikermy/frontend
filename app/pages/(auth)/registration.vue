@@ -18,7 +18,11 @@
         </p>
       </div>
     </div>
-    <TelegramAuthButton class="mt-4" @success="onTelegramSuccess" />
+    <TelegramAuthButton
+      class="mt-4"
+      :label="$t('registration.signup_tg')"
+      @success="onTelegramSuccess"
+    />
 
     <RegistrationForm class="mt-10" />
   </div>

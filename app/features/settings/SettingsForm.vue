@@ -188,16 +188,18 @@
         {{ getFieldError("telegramLink") }}
       </span>
 
-      <!-- Привязка/смена Telegram через виджет.
-           Telegram-аккаунт: обновляет identity (приоритет у данных виджета).
-           Email-аккаунт: сохраняет только telegram username (ник), убирая дубль. -->
-      <div class="mt-1">
+      <!-- Telegram задаётся только виджетом. Кнопка видна лишь для первичной
+           привязки (telegramId пуст); при уже привязанном Telegram — скрыта. -->
+      <div v-if="!authStore.profile.telegramId" class="mt-1">
         <TelegramAuthButton
           mode="change"
-          :label="isTelegramAccount ? $t('settings.change_telegram') : $t('settings.connect_telegram')"
+          :label="$t('settings.connect_telegram')"
           @success="handleTelegramChanged"
         />
       </div>
+
+      <!-- История изменений Telegram username (всегда, независимо от привязки) -->
+      <TelegramUsernameHistory />
     </div>
 
     <!-- Success/Error Messages -->
@@ -247,6 +249,7 @@
 import Input from "~/shared/ui/Input.vue";
 import Button from "~/shared/ui/Button.vue";
 import TelegramAuthButton from "~/features/auth/TelegramAuthButton.vue";
+import TelegramUsernameHistory from "./TelegramUsernameHistory.vue";
 import ChangePasswordModal from "./ChangePasswordModal/index.vue";
 import ForgotPasswordModal from "./ForgotPasswordModal/index.vue";
 import ConfirmPasswordModal from "./ConfirmPasswordModal/index.vue";
@@ -351,12 +354,6 @@ const validationRules = {
     { email: true, message: t("validation.email_invalid") },
   ],
   password: [],
-  telegramLink: [
-    {
-      pattern: /^(?:@[a-zA-Z0-9_]{3,32}|https?:\/\/(?:t\.me|telegram\.me)\/[a-zA-Z0-9_]{3,32})$/,
-      message: t("validation.telegram_link_invalid"),
-    },
-  ],
 };
 
 const { validationErrors, isFormValid, hasErrors, validateField, validateAll } =
@@ -427,14 +424,6 @@ const submitSettings = async (formData: SettingsFormData) => {
   const fullName = (formData.fullName || "").trim();
   if (fullName) {
     await authService.updateNickname(fullName);
-  }
-
-  if (!telegramAccount) {
-    // Сохраняем Telegram username (без @) в BFF → Auth.
-    const tg = (formData.telegramLink || "").trim().replace(/^@/, "").replace(/^https?:\/\/(t\.me|telegram\.me)\//, "");
-    if (tg) {
-      await authService.updateTelegramUsername(tg);
-    }
   }
 
   return { success: true, data: formData };

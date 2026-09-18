@@ -47,6 +47,7 @@ import Button from "@/shared/ui/Button.vue";
 import { getAuthService } from "~/shared/api/services";
 
 const localePath = useLocalePath();
+const { t } = useI18n();
 
 const username = ref("");
 const email = ref("");
@@ -71,7 +72,11 @@ async function handleSubmit() {
     });
     await navigateTo(localePath("/sign-in"));
   } catch (error: any) {
-    errorMessage.value = error.message || "Registration failed. Please try again.";
+    const message: string = error?.message || "";
+    // Username immutable: при занятости просим ввести другое имя (без авто-фолбэка).
+    errorMessage.value = /already taken/i.test(message)
+      ? t("registration.username_taken")
+      : message || "Registration failed. Please try again.";
   } finally {
     loading.value = false;
   }

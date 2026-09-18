@@ -15,6 +15,9 @@
   >
     {{ label }}
   </Button>
+  <p v-if="errorMessage" class="mt-2 text-negative text-sm">
+    {{ errorMessage }}
+  </p>
 </template>
 
 <script setup lang="ts">
@@ -22,6 +25,7 @@ import Button from "~/shared/ui/Button.vue";
 import { getAuthService } from "~/shared/api/services";
 import { useAuthStore } from "~/shared/store/useAuth";
 import { mockTelegramAuth } from "~/shared/api/mocks";
+import { telegramErrorKey } from "~/shared/utils/telegramError";
 
 // mode="login" — вход/регистрация; mode="change" — смена Telegram identity в настройках.
 const props = withDefaults(
@@ -95,7 +99,10 @@ async function handleMockClick() {
     emit("success");
     await navigateTo(localePath("/"));
   } catch (error: any) {
-    errorMessage.value = error?.message || "Telegram sign in failed. Please try again.";
+    const key = telegramErrorKey(error?.message);
+    errorMessage.value = key
+      ? t(key)
+      : error?.message || "Telegram sign in failed. Please try again.";
   } finally {
     loading.value = false;
   }

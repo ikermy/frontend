@@ -12,12 +12,14 @@
 <script setup lang="ts">
 import { getAuthService } from "~/shared/api/services";
 import { useAuthStore } from "~/shared/store/useAuth";
+import { telegramErrorKey } from "~/shared/utils/telegramError";
 
 // Telegram перенаправляет сюда (data-auth-url) с GET-параметрами:
 // id, first_name, last_name, username, photo_url, auth_date, hash.
 const route = useRoute();
 const localePath = useLocalePath();
 const authStore = useAuthStore();
+const { t } = useI18n();
 
 const loading = ref(true);
 const error = ref("");
@@ -84,7 +86,10 @@ onMounted(async () => {
     await navigateTo(localePath("/"));
   } catch (e: any) {
     console.error(debugCtx, "telegramAuth FAILED:", e?.message, e?.code, e);
-    error.value = e?.message || "Telegram sign in failed. Please try again.";
+    const key = telegramErrorKey(e?.message);
+    error.value = key
+      ? t(key)
+      : e?.message || "Telegram sign in failed. Please try again.";
     loading.value = false;
   }
 });
