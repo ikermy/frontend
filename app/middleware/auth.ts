@@ -5,7 +5,7 @@
  */
 import { useAuthStore } from "~/shared/store/useAuth";
 
-export default defineNuxtRouteMiddleware((to) => {
+export default defineNuxtRouteMiddleware(() => {
   const authStore = useAuthStore();
 
   // Если не инициализирован — читаем токен из cookie
