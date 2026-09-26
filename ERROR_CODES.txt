@@ -1,0 +1,205 @@
+================================================================================
+--------------------------------------------------------------------------------
+КАК ФРОНТ ФОРМИРУЕТ ОШИБКУ (app/shared/api/client.ts)
+--------------------------------------------------------------------------------
+При ответе !response.ok фронт достаёт из JSON-тела BFF поля { code, message }.
+Итоговый объект ApiError = { message, code, field?, details? }, где:
+
+  code    = body.code                — если BFF вернул свой код
+          = `HTTP_${status}`         — если код не пришёл (например 502, 404)
+          = "REQUEST_ERROR"          — сетевая ошибка / тело не JSON
+  message = body.message              — если есть
+          = response.statusText       — иначе
+          = "API request failed"      — при сетевом сбое
+
+================================================================================
+1. БИЗНЕС-КОДЫ BFF (основные, приходят в body.code)
+================================================================================
+Код                        HTTP   Показывать пользователю
+-------------------------  -----  ---------------------------------------------
+VALIDATION_ERROR           400    Ошибка входных данных (можно взять message/details)
+MISSING_DEPENDENCY         400    Не хватает обязательного поля
+INSUFFICIENT_FUNDS         402    Недостаточно средств (details.topUpRequired)
+PARTIAL_FUNDS              200    НЕ ошибка — частичный успех
+DUPLICATE_REQUEST          200    НЕ ошибка — повтор идемпотентного запроса
+BARCODEGEN_ERROR           503    Сервис генерации недоступен (сюда же обёрнуты
+                                  ошибки Auth-профиля — см. §4)
+BILLING_ERROR              503    Биллинг недоступен
+INTERNAL_ERROR             500    Внутренняя ошибка сервера
+UNAUTHORIZED               401    Не авторизован
+LOGIN_FAILED               500    Ошибка входа
+REGISTRATION_FAILED        500    Ошибка регистрации
+EMAIL_EXISTS               409    Email уже зарегистрирован
+REQUEST_IN_FLIGHT          409    Дублирующий запрос уже обрабатывается
+
+--- Верификация email (auth RPC: requestEmailVerification / verifyEmail) ---
+На текущий момент BFF может отдавать эти ошибки как BARCODEGEN_ERROR с
+message из §4. Коды ниже — целевой маппинг BFF при проксировании auth.
+EMAIL_VERIFICATION_FAILED      400    Неверный/истёкший токен подтверждения email
+EMAIL_ALREADY_VERIFIED         409    Email уже подтверждён
+EMAIL_NOT_LINKED               400    Нет привязанного реального email для подтверждения
+EMAIL_VERIFICATION_SEND_FAILED 503    Не удалось отправить письмо подтверждения
+                                      (нет SMTP/транспорта)
+
+================================================================================
+2. HTTP-КОДЫ-ЗАГЛУШКИ (когда body.code отсутствует)
+================================================================================
+Формат: HTTP_<status>. Наиболее вероятные:
+  HTTP_400  — некорректный запрос
+  HTTP_401  — не авторизован (например login/telegram)
+  HTTP_403  — доступ запрещён
+  HTTP_404  — не найдено
+  HTTP_409  — конфликт
+  HTTP_422  — необрабатываемые данные
+  HTTP_500  — ошибка сервера
+  HTTP_502  — неверный шлюз (прокси до бэкенда недоступен)
+  HTTP_503  — сервис недоступен
+  HTTP_504  — таймаут шлюза
+
+================================================================================
+3. СЕТЕВЫЕ / КЛИЕНТСКИЕ КОДЫ
+================================================================================
+REQUEST_ERROR   — сетевой сбой, CORS, не-JSON тело. message = "API request failed"
+                  или текст ошибки fetch. Обычно показывать generic-уведомление
+                  «Не удалось связаться с сервером, попробуйте позже».
+
+================================================================================
+4. СООБЩЕНИЯ, КОТОРЫЕ ВИДИТ ПОЛЬЗОВАТЕЛЬ (body.message)
+================================================================================
+Фронт матчит по тексту message (см. app/shared/utils/telegramError.ts),
+поэтому важны и строки, а не только коды.
+
+--- Авторизация / регистрация (code: UNAUTHORIZED / LOGIN_FAILED / EMAIL_EXISTS / HTTP_401) ---
+invalid credentials                      -> "Invalid email or password"
+login failed
+email already registered                 -> email уже занят
+registration failed
+invalid telegram authentication data
+
+--- Валидация формы регистрации (code: VALIDATION_ERROR) ---
+email and password are required
+email, password and username are required
+invalid request body
+id, first_name, auth_date and hash are required
+- отдельные DTO-сообщения Auth (прокидываются как message):
+  Invalid email format
+  Email must be at most 255 characters
+  Password must not be empty
+  Username is required
+  Username is already taken                  -> "This username is already taken..."
+  Username may only contain letters, digits, underscores and hyphens
+
+--- Настройки профиля (code: BARCODEGEN_ERROR, message = сырая ошибка Auth) ---
+Invalid nickname
+Nickname validation failed: <errors>
+Invalid photo format (expected base64 data URL)
+Photo is too large (max ~1MB base64)
+failed to update nickname: <err>
+failed to update avatar: <err>
+failed to get user profile: <err>
+failed to get telegram username history: <err>
+unauthorized
+auth user service is not configured
+
+--- Смена пароля (code: VALIDATION_ERROR / BARCODEGEN_ERROR) ---
+current_password and new_password are required
+Invalid current password
+Invalid new password
+New password must be different from current password
+Password validation failed: <errors>
+failed to change password: <err>
+
+--- Telegram: привязка / смена (code: BARCODEGEN_ERROR) ---
+Telegram ID is already linked to another account
+    -> "This Telegram account is already linked to another user and cannot be moved."
+Telegram ID cannot be changed once linked
+    -> "This account already has a Telegram linked; it cannot be changed."
+invalid telegram data
+failed to change telegram account: <err>
+
+--- Email: привязка (code: BARCODEGEN_ERROR) ---
+Invalid email address
+Invalid email format
+Email address is already in use              -> "This email is already in use by another account."
+User already has a real email address linked -> "This account already has a real email linked."
+failed to link email: <err>                  -> "Failed to save email. Please try again."
+
+--- Email: верификация (code: BARCODEGEN_ERROR / EMAIL_*) ---
+No email address linked to verify            -> "Сначала привяжите email к аккаунту."
+Email is already verified                    -> "Email уже подтверждён."
+Invalid email verification token
+Invalid or expired email verification token  -> "Ссылка/код подтверждения недействительны или истекли."
+failed to issue email verification token: <err>
+failed to verify email: <err>
+
+--- Квоты / генерация (code: INSUFFICIENT_FUNDS / BARCODEGEN_ERROR / BILLING_ERROR) ---
+no funds available
+only <N> of <M> units available, set confirmed=true to proceed
+partial success is disabled
+unsupported barcodeType: <type>
+data field is required for code128 generation
+data field is required for code128 edit
+required input fields missing: [<fields>]
+field "<field>" requires: [<deps>]
+edit already in progress for barcode <id>
+free edit right already used for barcode <id>
+failed to publish barcode.edited event: <err>
+AI signature service unavailable: <err>
+AI photo service unavailable: <err>
+
+--- Админ-конфиг (code: VALIDATION_ERROR) ---
+revision param is required
+calculationChain entry must have a non-empty field
+calculationChain source must be one of: calculate, user, random
+barcodeGen timeout must be > 0
+billing timeout must be > 0
+ai timeout must be > 0
+history timeout must be >= 0
+auth timeout must be >= 0
+timeout values must not exceed 300000ms (5 minutes)
+tier minAmount must be >= 0
+tier maxAmount must be greater than minAmount
+tier bonusPercent must be between 0 and 100
+tiers must not overlap
+
+================================================================================
+5. УЖЕ ГОТОВЫЕ ПОЛЬЗОВАТЕЛЬСКИЕ ТЕКСТЫ (i18n keys, en.json)
+================================================================================
+sign_in.invalid_credentials                          Invalid email or password
+registration.username_taken                          This username is already taken...
+settings.email_already_in_use                        This email is already in use by another account.
+settings.email_already_linked                        This account already has a real email linked.
+settings.email_link_failed                           Failed to save email. Please try again.
+settings.email_verify_success                        Email verified successfully.
+settings.email_already_verified                      This email is already verified.
+settings.email_verify_invalid                        The verification link is invalid or has expired.
+settings.email_not_linked                            Link an email to your account before verifying it.
+settings.telegram_already_linked                     This Telegram account is already linked to another user and cannot be moved.
+settings.telegram_id_locked                          This account already has a Telegram linked; it cannot be changed.
+settings.telegram_link_failed                        Failed to connect Telegram. Please try again.
+settings.telegram_username_history_error             Failed to load Telegram username history.
+settings.change_password.error_invalid_current       Incorrect current password.
+settings.change_password.error_same                  The new password must differ from the current one.
+settings.change_password.error_weak                  The new password does not meet the requirements.
+settings.change_password.error_mismatch              New passwords do not match.
+settings.change_password.error                       Failed to change password. Please try again.
+bulk-generation.generation_error                     Something went wrong during the generation process...
+photo-generator.balance_warning.message              Your wallet has ${available} available. You need ${deficit} more...
+
+================================================================================
+6. РЕКОМЕНДАЦИИ ДЛЯ UI УВЕДОМЛЕНИЙ
+================================================================================
+- Сначала проверять body.code (UNAUTHORIZED, EMAIL_EXISTS, INSUFFICIENT_FUNDS,
+  REQUEST_IN_FLIGHT, VALIDATION_ERROR, *_ERROR из §1), затем fallback HTTP_<status>,
+  затем REQUEST_ERROR.
+- INSUFFICIENT_FUNDS: читать details.topUpRequired -> показать CTA «Пополнить».
+- PARTIAL_FUNDS и DUPLICATE_REQUEST — не уведомлять об ошибке (успех/кэш).
+- REQUEST_IN_FLIGHT — показать «Запрос уже обрабатывается».
+- BARCODEGEN_ERROR/BILLING_ERROR — ошибка внешнего сервиса, показывать generic +
+  предложить повторить позже.
+- Верификация email: success → показать подтверждение и обновить профиль
+  (isEmailVerified=true); EMAIL_ALREADY_VERIFIED — не ошибка, показать
+  «уже подтверждён»; EMAIL_VERIFICATION_FAILED/EMAIL_NOT_LINKED — показать
+  сообщение и предложить привязать/запросить письмо повторно.
+- Для специфичных сообщений (Telegram, email) матчить message (см. §4/§5).
+================================================================================

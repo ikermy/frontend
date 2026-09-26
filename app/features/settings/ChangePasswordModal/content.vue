@@ -81,7 +81,9 @@ const handleSubmit = async () => {
   errorMessage.value = "";
   successMessage.value = "";
 
-  if (!currentPassword.value || !newPassword.value || !confirmPassword.value) {
+  // currentPassword необязателен: для Telegram-аккаунта без пароля это установка
+  // пароля (Auth игнорирует пустое значение), для остальных Auth требует его.
+  if (!newPassword.value || !confirmPassword.value) {
     errorMessage.value = t("settings.change_password.error_required");
     return;
   }

@@ -114,7 +114,6 @@
           :value="getFieldValue('password')"
           :placeholder="$t('settings.password_placeholder')"
           class="flex-1 bg-transparent text-text-tertiary outline-none p-3"
-          :disabled="isTelegramAccount"
           @input="
             (e: Event) =>
               handleFieldChange(
@@ -128,7 +127,6 @@
           color="secondary"
           text-color="white"
           class="h-9 my-1 mr-1"
-          :disabled="isTelegramAccount"
           @click="isChangePasswordModalOpen = true"
         >
           {{ $t("settings.change") }}
@@ -480,9 +478,6 @@ const loadProfile = async () => {
 
 // Хранит base64 загруженной/существующей фотографии для отображения
 const uploadedPhotoBase64 = ref("");
-
-// Аккаунт, созданный через Telegram — смена full name/пароля/telegram недоступна.
-const isTelegramAccount = computed(() => authStore.isTelegramAccount);
 
 // Превью аватара: свежезагруженный файл > существующее фото (base64) > фото из Telegram
 const avatarPreview = computed(() => {
