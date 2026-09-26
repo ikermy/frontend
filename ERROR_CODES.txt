@@ -175,7 +175,6 @@ settings.email_already_verified                      This email is already verif
 settings.email_verify_invalid                        The verification link is invalid or has expired.
 settings.email_not_linked                            Link an email to your account before verifying it.
 settings.telegram_already_linked                     This Telegram account is already linked to another user and cannot be moved.
-settings.telegram_id_locked                          This account already has a Telegram linked; it cannot be changed.
 settings.telegram_link_failed                        Failed to connect Telegram. Please try again.
 settings.telegram_username_history_error             Failed to load Telegram username history.
 settings.change_password.error_invalid_current       Incorrect current password.

@@ -212,7 +212,6 @@
           </div>
 
           <Button
-            v-if="!showTelegramChange"
             color="tertiary"
             text-color="primary"
             leading-icon="mingcute:telegram-fill"
@@ -221,23 +220,10 @@
             {{ $t("settings.change_telegram") }}
           </Button>
 
-          <template v-else>
-            <p class="text-xs font-medium text-negative">
-              {{ $t("settings.change_telegram_warning") }}
-            </p>
-            <TelegramAuthButton
-              mode="change"
-              :label="$t('settings.change_telegram')"
-              @success="handleTelegramChanged"
-            />
-            <Button
-              color="secondary"
-              text-color="white"
-              :on-click="closeTelegramChange"
-            >
-              {{ $t("settings.change_telegram_cancel") }}
-            </Button>
-          </template>
+          <TelegramChangeModal
+            v-model:is-open="isTelegramChangeModalOpen"
+            @success="handleTelegramChanged"
+          />
         </template>
       </div>
 
@@ -293,6 +279,7 @@ import Input from "~/shared/ui/Input.vue";
 import Button from "~/shared/ui/Button.vue";
 import TelegramAuthButton from "~/features/auth/TelegramAuthButton.vue";
 import TelegramUsernameHistory from "./TelegramUsernameHistory.vue";
+import TelegramChangeModal from "./TelegramChangeModal/index.vue";
 import ChangePasswordModal from "./ChangePasswordModal/index.vue";
 import ForgotPasswordModal from "./ForgotPasswordModal/index.vue";
 import ConfirmPasswordModal from "./ConfirmPasswordModal/index.vue";
@@ -599,19 +586,15 @@ const handleLogout = async () => {
   await navigateTo(localePath("/"));
 };
 
-// Смена Telegram разворачивает виджет только после явного действия пользователя,
-// чтобы случайный клик по кнопке Telegram не сменил привязку.
-const showTelegramChange = ref(false);
+// Смена Telegram открывается в отдельном модальном окне с пояснением и виджетом.
+const isTelegramChangeModalOpen = ref(false);
 const openTelegramChange = () => {
-  showTelegramChange.value = true;
-};
-const closeTelegramChange = () => {
-  showTelegramChange.value = false;
+  isTelegramChangeModalOpen.value = true;
 };
 
 // Telegram identity успешно изменён через виджет — перезагружаем профиль и форму.
 const handleTelegramChanged = async () => {
-  showTelegramChange.value = false;
+  isTelegramChangeModalOpen.value = false;
   await authStore.loadProfile();
   await loadProfile();
 };

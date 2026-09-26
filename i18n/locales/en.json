@@ -152,6 +152,7 @@
     "telegram_link_failed": "Failed to connect Telegram. Please try again.",
     "telegram_current_account": "Linked Telegram account",
     "telegram_connected": "Telegram connected",
+    "change_telegram_title": "Change Telegram account",
     "change_telegram_warning": "A new Telegram account will be linked and the current one will be unlinked. Your username and profile data stay unchanged.",
     "change_telegram_cancel": "Cancel"
   },
