@@ -74,9 +74,14 @@ async function handleSubmit() {
   } catch (error: any) {
     const message: string = error?.message || "";
     // Username immutable: при занятости просим ввести другое имя (без авто-фолбэка).
-    errorMessage.value = /already taken/i.test(message)
-      ? t("registration.username_taken")
-      : message || "Registration failed. Please try again.";
+    // Email занят — отдельное сообщение.
+    if (/already taken/i.test(message)) {
+      errorMessage.value = t("registration.username_taken");
+    } else if (/email already registered/i.test(message)) {
+      errorMessage.value = t("registration.email_taken");
+    } else {
+      errorMessage.value = message || "Registration failed. Please try again.";
+    }
   } finally {
     loading.value = false;
   }

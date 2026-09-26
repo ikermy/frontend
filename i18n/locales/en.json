@@ -49,6 +49,7 @@
     "password": "Password",
     "or_sign_in": "or sign in",
     "username_taken": "This username is already taken. Please choose another one.",
+    "email_taken": "This email is already registered. Please sign in or use another email.",
     "pdf_project": "PDF_PROJECT"
   },
   "telegramAuth": {
