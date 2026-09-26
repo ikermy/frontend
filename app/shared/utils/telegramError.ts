@@ -7,8 +7,5 @@ export function telegramErrorKey(message?: string): string | null {
   if (/already linked to another account/i.test(m)) {
     return "settings.telegram_already_linked";
   }
-  if (/cannot be changed once linked/i.test(m)) {
-    return "settings.telegram_id_locked";
-  }
   return null;
 }

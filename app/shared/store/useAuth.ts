@@ -34,7 +34,7 @@ export const useAuthStore = defineStore("auth", {
     telegramHandle(state) {
       return state.profile.telegramUsername ? `@${state.profile.telegramUsername}` : "";
     },
-    // Аккаунт создан через Telegram — смена пароля/full name/telegram недоступна.
+    // Аккаунт создан через Telegram или имеет подтверждённую привязку.
     isTelegramAccount(state) {
       return state.profile.origin === "telegram" || state.profile.isTelegramVerified;
     },

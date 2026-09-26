@@ -186,14 +186,59 @@
         {{ getFieldError("telegramLink") }}
       </span>
 
-      <!-- Telegram задаётся только виджетом. Кнопка видна лишь для первичной
-           привязки (telegramId пуст); при уже привязанном Telegram — скрыта. -->
-      <div v-if="!authStore.profile.telegramId" class="mt-1">
-        <TelegramAuthButton
-          mode="change"
-          :label="$t('settings.connect_telegram')"
-          @success="handleTelegramChanged"
-        />
+      <!-- Telegram задаётся только виджетом: сначала — первичная привязка,
+           затем — смена на другой Telegram-аккаунт. -->
+      <div class="mt-1 flex flex-col gap-3">
+        <template v-if="!authStore.profile.telegramId">
+          <TelegramAuthButton
+            mode="change"
+            :label="$t('settings.connect_telegram')"
+            @success="handleTelegramChanged"
+          />
+        </template>
+
+        <template v-else>
+          <div
+            class="flex flex-col gap-1 rounded-[12px] bg-bg-secondary px-3 py-2"
+          >
+            <span class="text-xs font-medium text-text-tertiary">
+              {{ $t("settings.telegram_current_account") }}
+            </span>
+            <span class="text-sm font-medium text-text-primary">
+              {{
+                authStore.telegramHandle || $t("settings.telegram_connected")
+              }}
+            </span>
+          </div>
+
+          <Button
+            v-if="!showTelegramChange"
+            color="tertiary"
+            text-color="primary"
+            leading-icon="mingcute:telegram-fill"
+            :on-click="openTelegramChange"
+          >
+            {{ $t("settings.change_telegram") }}
+          </Button>
+
+          <template v-else>
+            <p class="text-xs font-medium text-negative">
+              {{ $t("settings.change_telegram_warning") }}
+            </p>
+            <TelegramAuthButton
+              mode="change"
+              :label="$t('settings.change_telegram')"
+              @success="handleTelegramChanged"
+            />
+            <Button
+              color="secondary"
+              text-color="white"
+              :on-click="closeTelegramChange"
+            >
+              {{ $t("settings.change_telegram_cancel") }}
+            </Button>
+          </template>
+        </template>
       </div>
 
       <!-- История изменений Telegram username (всегда, независимо от привязки) -->
@@ -384,7 +429,8 @@ const submitSettings = async (formData: SettingsFormData) => {
   const client = getApiClient();
   const authService = getAuthService();
 
-  // Для аккаунта, созданного через Telegram, смена full name/пароля/telegram недоступна.
+  // Для аккаунта, созданного через Telegram, смену Telegram выполняет только виджет,
+  // а email привязывается отдельным шагом (пароль не меняется).
   const telegramAccount = authStore.isTelegramAccount;
 
   // Если выбран новый файл — отправляем его (base64 data URL) в BFF → Auth.
@@ -553,8 +599,19 @@ const handleLogout = async () => {
   await navigateTo(localePath("/"));
 };
 
+// Смена Telegram разворачивает виджет только после явного действия пользователя,
+// чтобы случайный клик по кнопке Telegram не сменил привязку.
+const showTelegramChange = ref(false);
+const openTelegramChange = () => {
+  showTelegramChange.value = true;
+};
+const closeTelegramChange = () => {
+  showTelegramChange.value = false;
+};
+
 // Telegram identity успешно изменён через виджет — перезагружаем профиль и форму.
 const handleTelegramChanged = async () => {
+  showTelegramChange.value = false;
   await authStore.loadProfile();
   await loadProfile();
 };

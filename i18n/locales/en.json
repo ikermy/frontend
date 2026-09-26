@@ -149,8 +149,11 @@
     "telegram_username_history_show_more": "Show more",
     "telegram_username_history_error": "Failed to load Telegram username history.",
     "telegram_already_linked": "This Telegram account is already linked to another user and cannot be moved.",
-    "telegram_id_locked": "This account already has a Telegram linked; it cannot be changed.",
-    "telegram_link_failed": "Failed to connect Telegram. Please try again."
+    "telegram_link_failed": "Failed to connect Telegram. Please try again.",
+    "telegram_current_account": "Linked Telegram account",
+    "telegram_connected": "Telegram connected",
+    "change_telegram_warning": "A new Telegram account will be linked and the current one will be unlinked. Your username and profile data stay unchanged.",
+    "change_telegram_cancel": "Cancel"
   },
   "bulk-generation": {
     "title": "Bulk Generation",
