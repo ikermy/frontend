@@ -1,18 +1,29 @@
 <template>
   <input
-    v-bind="$attrs"
+    v-bind="attrs"
+    :value="props.modelValue ?? ''"
     :placeholder="props.placeholder"
     :class="inputClass"
-    :type="props.type"
+    :type="props.type || 'text'"
+    @input="onInput"
   />
 </template>
 
 <script setup lang="ts">
+defineOptions({ inheritAttrs: false });
+
 const props = defineProps<{
   placeholder: string;
   class?: string;
   type?: string;
+  modelValue?: string | number | null;
 }>();
+
+const emit = defineEmits<{
+  (e: "update:modelValue", value: string): void;
+}>();
+
+const attrs = useAttrs();
 
 const inputClass = computed(() => {
   return (
@@ -20,4 +31,8 @@ const inputClass = computed(() => {
     " " + props.class
   );
 });
+
+function onInput(event: Event) {
+  emit("update:modelValue", (event.target as HTMLInputElement).value);
+}
 </script>

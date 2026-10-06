@@ -389,6 +389,7 @@
   "barcodes": {
     "title": "Barcodes",
     "create_new": "Create new",
+    "empty": "No barcodes yet. Generate your first one.",
     "re_create": "Re-Create",
     "free_adjustment": "Free Adjustment",
     "sort_by": "Sort by",
@@ -451,6 +452,10 @@
   },
   "generating": {
     "title": "Ai Barcode Generator",
+    "select_revision": "Select revision",
+    "generate": "Generate",
+    "generating": "Generating...",
+    "result": "Result",
     "tips": "Tips for This Revision"
   },
   "validation": {

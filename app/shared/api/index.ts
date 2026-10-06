@@ -24,6 +24,8 @@ export {
   ReferralService,
   getBulkGenerationService,
   BulkGenerationService,
+  getBarcodeGenerationService,
+  BarcodeGenerationService,
 } from './services';
 
 // Types

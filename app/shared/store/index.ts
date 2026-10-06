@@ -11,4 +11,5 @@ export * from "./useLookup";
 export * from "./useVerificationTest";
 export * from "./useReferral";
 export * from "./useBulkGeneration";
+export * from "./useBarcodeGeneration";
 

@@ -132,6 +132,85 @@ export interface BulkGenerationHistoryItem {
   currency?: string;
 }
 
+// ─── Barcode generation (BFF unified generate flow, ПЛАН §3.1/§3.3) ─────────
+
+export interface RevisionFieldOption {
+  value: string;
+  label: string;
+}
+
+export interface RevisionFieldValidation {
+  minLength?: number;
+  maxLength?: number;
+  pattern?: string;
+  maxDate?: string;
+  minDate?: string;
+}
+
+export interface RevisionFieldSchema {
+  name: string;
+  type: "string" | "date" | "enum" | "number" | string;
+  required: boolean;
+  label: string;
+  order: number;
+  options?: string[];
+  optionItems?: RevisionFieldOption[];
+  fallbackValue?: string;
+  validation?: RevisionFieldValidation;
+}
+
+export interface RevisionFieldGroup {
+  name: string;
+  label: string;
+  fields: string[];
+}
+
+export interface RevisionSchema {
+  revision: string;
+  displayName: string;
+  revisionEffectiveDate?: string;
+  supportedModes?: string[];
+  baseInput?: string[];
+  generatedFields?: string[];
+  fields: RevisionFieldSchema[];
+  groups?: RevisionFieldGroup[];
+}
+
+export interface RevisionListItem {
+  name: string;
+  displayName: string;
+  enabled: boolean;
+}
+
+export interface GeneratedBarcodeItem {
+  url: string;
+  format: string;
+  generationId?: string;
+}
+
+export interface GenerateResult {
+  success: boolean;
+  buildId?: string;
+  batchId?: string;
+  barcodes: GeneratedBarcodeItem[];
+  computed?: string[];
+  skipped?: string[];
+  billing?: {
+    totalCost?: number;
+    unitPrice?: number;
+    currency?: string;
+    [key: string]: any;
+  };
+}
+
+export interface PrepareResult {
+  success: boolean;
+  revision: string;
+  draftFields: Record<string, any>;
+  computed?: string[];
+  skipped?: string[];
+}
+
 // Auth types
 export interface SignUpPayload {
   username: string;

@@ -11,5 +11,6 @@ export * from './lookup.service';
 export * from './verificationTest.service';
 export * from './referral.service';
 export * from './bulkGeneration.service';
+export * from './barcodeGeneration.service';
 export * from './auth.service';
 

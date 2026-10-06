@@ -66,6 +66,11 @@ export default defineNuxtConfig({
           changeOrigin: true,
           rewrite: (path: string) => path.replace(/^\/history/, ""),
         },
+        // Готовые PNG от render (локальный режим без MinIO).
+        "/files": {
+          target: process.env.NUXT_PROXY_RENDER_TARGET || "http://render:8000",
+          changeOrigin: true,
+        },
       },
     },
     plugins: [tailwindcss()],
